@@ -4,8 +4,23 @@ An implementation of Lox using C# using this tutorial: http://www.craftinginterp
 Todo: ☐ ☑ ☒
 
 ☐ Scanner
-  ☐ Tokenizer
-  ☐ Error Handling
+
+☐ Tokenizer
 
 ☐ Syntax Trees
+
 ☐ Parser
+
+☐ Evaluator
+
+☐ Statements
+
+☐ Control Flow
+
+☐ Functions
+
+☐ Resolving and Binding
+
+☐ Classes
+
+☐ Inheritance
