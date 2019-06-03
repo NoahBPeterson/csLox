@@ -59,7 +59,7 @@ namespace Lox
 
         }
 
-        static void error(int line, String message)
+        public static void error(int line, String message)
         {
             report(line, "", message);
         }
