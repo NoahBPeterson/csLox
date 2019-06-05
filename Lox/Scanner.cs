@@ -70,10 +70,40 @@ namespace Lox
                     line++;
                     break;
                 case '"': stringScanner(); break;
+            
+
                 default:
-                    Lox.error(line, "Unexpected character.");
+                    if(isDigit(c))
+                    {
+                        number();
+                    }else
+                    {
+                        Lox.error(line, "Unexpected character.");
+                    }
                     break;
             }
+        }
+
+        private void number()
+        {
+            while (isDigit(peek())) advance();
+
+            if(peek() == '.' && isDigit(peekNext()))
+            {
+                advance(); //Consume the .
+
+                while (isDigit(peek())) advance();
+
+            }
+
+            addToken(TokenType.NUMBER, double.Parse(source.Substring(start, current)));
+        }
+
+
+
+        private bool isDigit(char c)
+        {
+            return c >= '0' && c <= '9';
         }
 
         private void stringScanner()
@@ -105,6 +135,14 @@ namespace Lox
                 return '\0'; // '\n' ?
             }
             return source.ToCharArray()[current];
+        }
+
+        private char peekNext()
+        {
+            if (current + 1 >= source.Length) { return '\0'; } //If there's nothing next, return '\0'
+
+            return source.ToCharArray()[current + 1];
+
         }
 
         private bool Match(char expected) //Conditional advance()
