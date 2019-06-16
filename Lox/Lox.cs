@@ -54,8 +54,13 @@ namespace Lox
 
         static void run(string fileBytes)
         {
-            List<Token> tokens = Token.Tokenize(fileBytes);//Write a tokenizer. '5 + 1' needs to be equivalent to '5+1'
-            Scanner scanner;
+            Scanner scanner = new Scanner(fileBytes);
+            List<Token> tokens = scanner.scanTokens();
+
+            for(int i = 0; i < tokens.Count; i++)
+            {
+                Console.WriteLine(tokens.ElementAt(i).toString());
+            }
 
         }
 

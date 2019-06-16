@@ -47,7 +47,7 @@ namespace Lox
             IDENTIFIER, STRING, NUMBER,
 
             //Keywords
-            AND, OR, CLASS, IF, ELSE, FUNC, FOR, NIL,
+            AND, OR, CLASS, IF, ELSE, FUNC, FOR, NIL, FALSE,
             PRINT, RETURN, SUPER_CLASS, THIS_OBJECT, TRUE, VAR, WHILE,
 
             EOF

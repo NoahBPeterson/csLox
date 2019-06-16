@@ -1,31 +1,55 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System;
 using static Lox.Token;
 
 namespace Lox
 {
-    class Scanner
+    public class Scanner
     {
         private string source;
         private List<Token> tokens = new List<Token>();
+
+        private static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>()
+        {
+            { "and", TokenType.AND},
+            { "class", TokenType.CLASS },
+            { "else", TokenType.ELSE },
+            { "false", TokenType.FALSE },
+            { "for", TokenType.FOR },
+            { "fun", TokenType.FUNC },
+            { "if", TokenType.IF },
+            {  "nil", TokenType.NIL },
+            { "or", TokenType.OR },
+            { "print", TokenType.PRINT },
+            { "return", TokenType.RETURN },
+            { "super", TokenType.SUPER_CLASS },
+            { "this", TokenType.THIS_OBJECT },
+            { "true", TokenType.TRUE },
+            { "var", TokenType.VAR },
+            { "while", TokenType.WHILE }
+        };
+
 
         private int start = 0;
         private int current = 0;
         private int line = 1;
 
-        Scanner(string source)
+        public Scanner(string source)
         {
             this.source = source;
         }
 
-        List<Token> scanTokens()
+        public List<Token> scanTokens()
         {
-            while(!isAtEnd())
+            while (!isAtEnd())
             {
                 start = current;
-                scanTokens();
+                scanToken();
             }
-            
+
             tokens.Add(new Token(TokenType.EOF, "", null, line));
+
             return tokens;
         }
 
@@ -37,7 +61,7 @@ namespace Lox
         private void scanToken()
         {
             char c = advance();
-            switch(c)
+            switch (c)
             {
                 case '(': addToken(TokenType.LEFT_PAREN); break;
                 case ')': addToken(TokenType.RIGHT_PAREN); break;
@@ -54,11 +78,11 @@ namespace Lox
                 case '<': addToken(Match('=') ? TokenType.LESS_THAN_EQUALS : TokenType.LESS_THAN); break;
                 case '>': addToken(Match('=') ? TokenType.GREATER_THAN_EQUALS : TokenType.GREATER_THAN); break;
                 case '/':
-                    if(Match('/'))
+                    if (Match('/'))
                     { //Comments
                         while (peek() != '\n' && !isAtEnd())
                         { advance(); }
-                    }else{
+                    } else {
                         addToken(TokenType.FORWARD_SLASH);
                     }
                     break;
@@ -70,13 +94,22 @@ namespace Lox
                     line++;
                     break;
                 case '"': stringScanner(); break;
-            
+                case 'o': //'or' but not 'orchid'
+                    if (peek() == 'r')
+                    {
+                        addToken(TokenType.OR);
+                        advance();
+                    } break;
+
 
                 default:
-                    if(isDigit(c))
+                    if (isDigit(c))
                     {
                         number();
-                    }else
+                    } else if (isAlpha(c))
+                    {
+                        identifier();
+                    } else
                     {
                         Lox.error(line, "Unexpected character.");
                     }
@@ -84,11 +117,39 @@ namespace Lox
             }
         }
 
+        private void identifier()
+        {
+            while (isAlphaNumeric(peek())) { advance(); }
+
+            string text = source.Substring(start, current-start);
+            TokenType type;
+            keywords.TryGetValue(text, out type);
+
+            if (type == null)
+            {
+                type = TokenType.IDENTIFIER;
+            }
+            addToken(type);
+
+        }
+
+        private bool isAlpha(char c)
+        {
+            return (c >= 'a' && c <= 'z') ||
+                   (c >= 'A' && c <= 'Z') ||
+                   (c == '_');
+        }
+
+        private bool isAlphaNumeric(char c)
+        {
+            return isAlpha(c) || isDigit(c);
+        }
+
         private void number()
         {
             while (isDigit(peek())) advance();
 
-            if(peek() == '.' && isDigit(peekNext()))
+            if (peek() == '.' && isDigit(peekNext()))
             {
                 advance(); //Consume the .
 
@@ -96,7 +157,7 @@ namespace Lox
 
             }
 
-            addToken(TokenType.NUMBER, double.Parse(source.Substring(start, current)));
+            addToken(TokenType.NUMBER, double.Parse(source.Substring(start, current-start)));
         }
 
 
@@ -108,14 +169,14 @@ namespace Lox
 
         private void stringScanner()
         {
-            while(peek() != '"' && !isAtEnd()) //Checks if "" is given, in which case we do nothing.
+            while (peek() != '"' && !isAtEnd()) //Checks if "" is given, in which case we do nothing.
             {
                 if (peek() == '\n')
                 { line++; }
                 advance(); //Advance until next quotation mark
             }
 
-            if(isAtEnd()) //Never got to the next quotation mark
+            if (isAtEnd()) //Never got to the next quotation mark
             {
                 Lox.error(line, "Unterminated string.");
                 return;
@@ -124,13 +185,13 @@ namespace Lox
             advance(); //Last "
 
             //Trim quotes, add token
-            string value = source.Substring(start + 1, current - 1);
+            string value = source.Substring(start + 1, (current-start) - 1);
             addToken(TokenType.STRING, value);
         }
 
         private char peek()
         {
-            if(isAtEnd())
+            if (isAtEnd())
             {
                 return '\0'; // '\n' ?
             }
@@ -147,8 +208,8 @@ namespace Lox
 
         private bool Match(char expected) //Conditional advance()
         {
-            if(isAtEnd())
-            { return false;}
+            if (isAtEnd())
+            { return false; }
             if (source.ToCharArray()[current] != expected)
             { return false; }
 
@@ -170,8 +231,10 @@ namespace Lox
 
         private void addToken(TokenType type, object literal)
         {
-            string text = source.Substring(start, current);
+            string text = source.Substring(start, current-start);
             tokens.Add(new Token(type, text, literal, line));
         }
+
+
     }
 }
