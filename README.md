@@ -3,9 +3,9 @@ An implementation of Lox using C# using this tutorial: http://www.craftinginterp
 
 Todo: ☐ ☑ ☒
 
-☐ Scanner
+☑ Scanner
 
-☐ Tokenizer
+☑ Tokenizer
 
 ☐ Syntax Trees
 
