@@ -122,10 +122,10 @@ namespace Lox
             while (isAlphaNumeric(peek())) { advance(); }
 
             string text = source.Substring(start, current-start);
-            TokenType type;
+            TokenType type = TokenType.IDENTIFIER;
             keywords.TryGetValue(text, out type);
 
-            if (type == null)
+            if (type == 0) //0 = TokenType.LEFT_PAREN, which would not reach this.
             {
                 type = TokenType.IDENTIFIER;
             }
@@ -185,7 +185,7 @@ namespace Lox
             advance(); //Last "
 
             //Trim quotes, add token
-            string value = source.Substring(start + 1, (current-start) - 1);
+            string value = source.Substring(start + 1, (current-start) - 2);
             addToken(TokenType.STRING, value);
         }
 
