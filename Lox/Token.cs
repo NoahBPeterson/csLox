@@ -4,10 +4,10 @@ namespace Lox
 {
     public class Token
     {
-        TokenType type;
-        string lexeme;
-        object literal;
-        int line;
+        public TokenType type;
+        public string lexeme;
+        public object literal;
+        public int line;
 
         public Token(TokenType type, string lexeme, object literal, int line)
         {
@@ -19,9 +19,8 @@ namespace Lox
 
         public static List<Token> Tokenize(string input)
         {
-            List<Token> tokenizerList = new List<Token>();
-
-            return tokenizerList; //Placeholder
+            Scanner scanner = new Scanner(input);
+            return scanner.scanTokens();
         }
 
         public string toString() //ex. TokenType.NUMBER 3251 @objectID

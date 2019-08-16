@@ -54,8 +54,9 @@ namespace Lox
 
         static void run(string fileBytes)
         {
-            Scanner scanner = new Scanner(fileBytes);
-            List<Token> tokens = scanner.scanTokens();
+            List<Token> tokens = Token.Tokenize(fileBytes);
+            //Scanner scanner = new Scanner(fileBytes);
+            //List<Token> tokens = scanner.scanTokens();
 
             for(int i = 0; i < tokens.Count; i++)
             {
