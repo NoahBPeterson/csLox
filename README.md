@@ -7,7 +7,7 @@ Todo: ☐ ☑ ☒
 
 ☑ Tokenizer
 
-☐ Syntax Trees
+☑ Syntax Trees
 
 ☐ Parser
 
