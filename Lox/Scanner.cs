@@ -97,8 +97,15 @@ namespace Lox
                 case 'o': //'or' but not 'orchid'
                     if (peek() == 'r')
                     {
-                        addToken(TokenType.OR);
-                        advance();
+                        if(peekNext() == ' ' || peekNext() == '\t' || peekNext() == '\r' || peekNext() == '\n')
+                        {
+                            addToken(TokenType.OR);
+                            advance();
+                        } else
+                        {
+                            current--;
+                            identifier();
+                        }
                     } break;
 
 
