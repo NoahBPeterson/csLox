@@ -111,6 +111,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lox\Parser.cs" />
     <Compile Include="Lox\AstPrinter.cs" />
     <Compile Include="Lox\Expr.cs" />
     <Compile Include="Lox\Lox.cs" />
