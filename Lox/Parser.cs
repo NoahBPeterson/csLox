@@ -21,45 +21,45 @@ namespace Lox
             this.tokens = tokens;
         }
 
-        public Expr<T> parse()
+        public Expr parse()
         {
             try
             {
                 return expression();
             }
-            catch (ParseError _)
+            catch (ParseError)
             {
                 return null;
             }
         }
 
-        private Expr<T> expression()
+        private Expr expression()
         {
-            Expr<T> expr = ternaryExpression();
+            Expr expr = ternaryExpression();
 
             while (match(TokenType.COMMA))
             {
                 Token _operator = previous();
-                Expr<T> right = term();
-                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+                Expr right = term();
+                expr = new Expr.BinaryExpr(expr, _operator, right);
             }
 
             return expr;
         }
 
-        private Expr<T> ternaryExpression()
+        private Expr ternaryExpression()
         {
-            Expr<T> expr = equality(); //Comparison expression
-            Expr<T> trueExpression; //Result if comparison is true
+            Expr expr = equality(); //Comparison expression
+            Expr trueExpression; //Result if comparison is true
 
             if (match(TokenType.TERNARY_QUESTION))
             {
                 trueExpression = equality();
                 if(match(TokenType.TERNARY_COLON))
                 {
-                    Expr<T> falseExpression = equality(); //Result if comparison is false.
-                    Expr<T> temp = expr;
-                    expr = new Expr<T>.TernaryExpr(temp, trueExpression, falseExpression);
+                    Expr falseExpression = equality(); //Result if comparison is false.
+                    Expr temp = expr;
+                    expr = new Expr.TernaryExpr(temp, trueExpression, falseExpression);
 
                 }
             }
@@ -67,85 +67,85 @@ namespace Lox
             return expr;
         }
 
-        private Expr<T> equality()
+        private Expr equality()
         {
-            Expr<T> expr = comparison();
+            Expr expr = comparison();
 
             while (match(TokenType.EXCLAMATION_EQUALS, TokenType.EQUALS_EQUALS))
             {
                 Token _operator = previous();
-                Expr<T> right = comparison();
-                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+                Expr right = comparison();
+                expr = new Expr.BinaryExpr(expr, _operator, right);
             }
             return expr;
         }
 
-        private Expr<T> comparison()
+        private Expr comparison()
         {
-            Expr<T> expr = term();
+            Expr expr = term();
 
             while (match(TokenType.GREATER_THAN, TokenType.GREATER_THAN_EQUALS, TokenType.LESS_THAN, TokenType.LESS_THAN_EQUALS))
             {
                 Token _operator = previous();
-                Expr<T> right = term();
-                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+                Expr right = term();
+                expr = new Expr.BinaryExpr(expr, _operator, right);
             }
             return expr;
         }
 
-        private Expr<T> term()
+        private Expr term()
         {
-            Expr<T> expr = factor();
+            Expr expr = factor();
 
             while(match(TokenType.MINUS, TokenType.PLUS))
             {
                 Token _operator = previous();
-                Expr<T> right = factor();
-                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+                Expr right = factor();
+                expr = new Expr.BinaryExpr(expr, _operator, right);
             }
             return expr;
         }
 
-        private Expr<T> factor()
+        private Expr factor()
         {
-            Expr<T> expr = unary();
+            Expr expr = unary();
             
             while(match(TokenType.FORWARD_SLASH, TokenType.ASTERISK))
             {
                 Token _operator = previous();
-                Expr<T> right = unary();
-                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+                Expr right = unary();
+                expr = new Expr.BinaryExpr(expr, _operator, right);
             }
             return expr;
         }
 
-        private Expr<T> unary()
+        private Expr unary()
         {
             if(match(TokenType.EXCLAMATION, TokenType.MINUS))
             {
                 Token _operator = previous();
-                Expr<T> right = unary();
-                return new Expr<T>.UnaryExpr(_operator, right);
+                Expr right = unary();
+                return new Expr.UnaryExpr(_operator, right);
             }
             return primary();
         }
 
-        private Expr<T> primary()
+        private Expr primary()
         {
-            if (match(TokenType.FALSE)) return new Expr<T>.Literal(false);
-            if (match(TokenType.TRUE)) return new Expr<T>.Literal(true);
-            if (match(TokenType.NIL)) return new Expr<T>.Literal(null);
+            if (match(TokenType.FALSE)) return new Expr.Literal(false);
+            if (match(TokenType.TRUE)) return new Expr.Literal(true);
+            if (match(TokenType.NIL)) return new Expr.Literal(null);
 
             if(match(TokenType.NUMBER, TokenType.STRING))
             {
-                return new Expr<T>.Literal(previous().literal);
+                return new Expr.Literal(previous().literal);
             }
 
             if(match(TokenType.LEFT_PAREN))
             {
-                Expr<T> expr = expression();
+                Expr expr = expression();
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-                return new Expr<T>.Grouping(expr);
+                return new Expr.Grouping(expr);
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.

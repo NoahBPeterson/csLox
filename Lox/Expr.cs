@@ -6,81 +6,81 @@ using System.Threading.Tasks;
 
 namespace Lox
 {
-    public abstract class Expr<T>
+    public abstract class Expr
     {
-        public abstract T accept(Visitor<T> visitor);
+        public abstract T accept<T>(Visitor<T> visitor);
 
 
-        public class TernaryExpr : Expr<T>
+        public class TernaryExpr : Expr
         {
-            public readonly Expr<T> comparisonExpression;
-            public readonly Expr<T> trueExpression;
-            public readonly Expr<T> falseExpression;
+            public readonly Expr comparisonExpression;
+            public readonly Expr trueExpression;
+            public readonly Expr falseExpression;
 
-            public TernaryExpr(Expr<T> comparisonExpression, Expr<T> trueExpression, Expr<T> falseExpression)
+            public TernaryExpr(Expr comparisonExpression, Expr trueExpression, Expr falseExpression)
             {
                 this.comparisonExpression = comparisonExpression;
                 this.trueExpression = trueExpression;
                 this.falseExpression = falseExpression;
             }
 
-            public override T accept(Visitor<T> visitor)
+            public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitTernaryExpr(this);
             }
         }
-        public class BinaryExpr : Expr<T>
+        public class BinaryExpr : Expr
         {
-            public readonly Expr<T> left;
+            public readonly Expr left;
             public readonly Token operatorToken;
-            public readonly Expr<T> right;
+            public readonly Expr right;
 
-            public BinaryExpr(Expr<T> left, Token operatorToken, Expr<T> right) //operator is a keyword in C#
+            public BinaryExpr(Expr left, Token operatorToken, Expr right) //operator is a keyword in C#
             {
                 this.left = left;
                 this.operatorToken = operatorToken;
                 this.right = right;
             }
 
-            public override T accept(Visitor<T> visitor)
+            public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitBinaryExpr(this);
             }
         }
 
-        public class UnaryExpr : Expr<T>
+        public class UnaryExpr : Expr
         {
             public readonly Token operatorToken;
-            public readonly Expr<T> right;
+            public readonly Expr right;
 
-            public UnaryExpr(Token operatorToken, Expr<T> expression)
+            public UnaryExpr(Token operatorToken, Expr expression)
             {
                 this.operatorToken = operatorToken;
                 this.right = expression;
             }
 
-            public override T accept(Visitor<T> visitor)
+            public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitUnaryExpr(this);
             }
         }
 
-        public class Grouping : Expr<T>
+        public class Grouping : Expr
         {
-            public readonly Expr<T> expression; // "(" expr ")"
+            public readonly Expr expression; // "(" expr ")"
 
-            public Grouping(Expr<T> expression)
+            public Grouping(Expr expression)
             {
                 this.expression = expression;
             }
 
-            public override T accept(Visitor<T> visitor)
+            public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitGroupingExpr(this);
             }
         }
 
-        public class Literal : Expr<T>
+        public class Literal : Expr
         {
             public readonly Object literal;
             
@@ -89,7 +89,7 @@ namespace Lox
                 this.literal = value;
             }
 
-            public override T accept(Visitor<T> visitor)
+            public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitLiteralExpr(this);
             }
@@ -98,11 +98,11 @@ namespace Lox
     }
     public interface Visitor<T>
     {
-        T visitTernaryExpr(Expr<T>.TernaryExpr ternaryExpr);
-        T visitBinaryExpr(Expr<T>.BinaryExpr binaryExpr);
-        T visitUnaryExpr(Expr<T>.UnaryExpr unaryExpr);
-        T visitGroupingExpr(Expr<T>.Grouping grouping);
-        T visitLiteralExpr(Expr<T>.Literal literal);
+        T visitTernaryExpr(Expr.TernaryExpr ternaryExpr);
+        T visitBinaryExpr(Expr.BinaryExpr binaryExpr);
+        T visitUnaryExpr(Expr.UnaryExpr unaryExpr);
+        T visitGroupingExpr(Expr.Grouping grouping);
+        T visitLiteralExpr(Expr.Literal literal);
     }
 
 }

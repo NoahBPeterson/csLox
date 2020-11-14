@@ -8,42 +8,42 @@ namespace Lox
 {
     public class AstPrinter : Visitor<string>
     {
-        public string print(Expr<string> expr)
+        public string print(Expr expr)
         {
             return expr.accept(this);
         }
 
-        public string visitTernaryExpr(Expr<String>.TernaryExpr expr)
+        public string visitTernaryExpr(Expr.TernaryExpr expr)
         {
-            return parenthesize("?:", new Expr<String>[] { expr.comparisonExpression, expr.trueExpression, expr.falseExpression });
+            return parenthesize("?:", new Expr[] { expr.comparisonExpression, expr.trueExpression, expr.falseExpression });
         }
-        public string visitBinaryExpr(Expr<String>.BinaryExpr expr)
+        public string visitBinaryExpr(Expr.BinaryExpr expr)
         {
-            return parenthesize(expr.operatorToken.lexeme, new Expr<String>[] { expr.left, expr.right});
-        }
-
-        public string visitGroupingExpr(Expr<String>.Grouping expr)
-        {
-            return parenthesize("group", new Expr<String>[] { expr.expression });
+            return parenthesize(expr.operatorToken.lexeme, new Expr[] { expr.left, expr.right});
         }
 
-        public string visitLiteralExpr(Expr<String>.Literal expr)
+        public string visitGroupingExpr(Expr.Grouping expr)
+        {
+            return parenthesize("group", new Expr[] { expr.expression });
+        }
+
+        public string visitLiteralExpr(Expr.Literal expr)
         {
             if (expr.literal == null) return "nil";
             return expr.literal.ToString();
         }
 
-        public string visitUnaryExpr(Expr<String>.UnaryExpr expr)
+        public string visitUnaryExpr(Expr.UnaryExpr expr)
         {
-            return parenthesize(expr.operatorToken.lexeme, new Expr<String>[] { expr.right });
+            return parenthesize(expr.operatorToken.lexeme, new Expr[] { expr.right });
         }
 
-        private string parenthesize(string name, Expr<String>[] exprs)
+        private string parenthesize(string name, Expr[] exprs)
         {
             StringBuilder builder = new StringBuilder();
             
             builder.Append("(").Append(name);
-            foreach (Expr<String> expr in exprs)
+            foreach (Expr expr in exprs)
             {
                 builder.Append(" ");
                 builder.Append(expr.accept(this));
