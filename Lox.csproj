@@ -112,10 +112,12 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lox\Interpreter.cs" />
     <Compile Include="Lox\Parser.cs" />
     <Compile Include="Lox\AstPrinter.cs" />
     <Compile Include="Lox\Expr.cs" />
     <Compile Include="Lox\Lox.cs" />
+    <Compile Include="Lox\RuntimeError.cs" />
     <Compile Include="Lox\Scanner.cs" />
     <Compile Include="Lox\Token.cs" />
   </ItemGroup>

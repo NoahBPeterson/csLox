@@ -9,7 +9,9 @@ namespace Lox
 {
     class Lox
     {
+        private static Interpreter interpreter = new Interpreter();
         static bool hadError = false;
+        static bool hadRuntimeError = false;
 
         static void Main(string[] args)
         {
@@ -35,7 +37,11 @@ namespace Lox
 
                 if (hadError)
                 {
-                    Environment.Exit(64);
+                    Environment.Exit(65);
+                }
+                if(hadRuntimeError)
+                {
+                    Environment.Exit(70);
                 }
 
             }
@@ -55,10 +61,12 @@ namespace Lox
         static void run(string fileBytes)
         {
             List<Token> tokens = Token.Tokenize(fileBytes);
-            Parser<string> parser = new Parser<string>(tokens);
-            Expr<string> expression = parser.parse();
+            Parser<Object> parser = new Parser<Object>(tokens);
+            Expr expression = parser.parse();
 
-            if (hadError) return;
+            //if (hadError) return;
+
+            interpreter.interpret(expression);
 
             Console.WriteLine(new AstPrinter().print(expression));
 
@@ -91,6 +99,12 @@ namespace Lox
             {
                 report(token.line, " at '" + token.lexeme + "'", message);
             }
+        }
+
+        public static void runtimeError(RuntimeError error)
+        {
+            Console.WriteLine(error.Message + "\n[line " + error.token.line + "]");
+            hadRuntimeError = true;
         }
     }
 }
