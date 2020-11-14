@@ -11,7 +11,7 @@ Todo: ☐ ☑ ☒
 
 ☑ Parser
 
-☐ Evaluator
+☑ Evaluator
 
 ☐ Statements
 
