@@ -19,7 +19,7 @@ namespace Lox
             { "for", TokenType.FOR },
             { "fun", TokenType.FUNC },
             { "if", TokenType.IF },
-            {  "nil", TokenType.NIL },
+            { "nil", TokenType.NIL },
             { "or", TokenType.OR },
             { "print", TokenType.PRINT },
             { "return", TokenType.RETURN },
@@ -77,6 +77,8 @@ namespace Lox
                 case '=': addToken(Match('=') ? TokenType.EQUALS_EQUALS : TokenType.EQUALS); break;
                 case '<': addToken(Match('=') ? TokenType.LESS_THAN_EQUALS : TokenType.LESS_THAN); break;
                 case '>': addToken(Match('=') ? TokenType.GREATER_THAN_EQUALS : TokenType.GREATER_THAN); break;
+                case '?': addToken(TokenType.TERNARY_QUESTION); break;
+                case ':': addToken(TokenType.TERNARY_COLON); break;
                 case '/':
                     if (Match('/'))
                     { //Comments

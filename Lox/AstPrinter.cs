@@ -13,6 +13,10 @@ namespace Lox
             return expr.accept(this);
         }
 
+        public string visitTernaryExpr(Expr<String>.TernaryExpr expr)
+        {
+            return parenthesize("?:", new Expr<String>[] { expr.comparisonExpression, expr.trueExpression, expr.falseExpression });
+        }
         public string visitBinaryExpr(Expr<String>.BinaryExpr expr)
         {
             return parenthesize(expr.operatorToken.lexeme, new Expr<String>[] { expr.left, expr.right});

@@ -9,7 +9,7 @@ Todo: ☐ ☑ ☒
 
 ☑ Syntax Trees
 
-☐ Parser
+☑ Parser
 
 ☐ Evaluator
 

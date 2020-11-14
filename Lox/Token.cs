@@ -41,6 +41,7 @@ namespace Lox
             EQUALS, EQUALS_EQUALS,
             GREATER_THAN, GREATER_THAN_EQUALS,
             LESS_THAN, LESS_THAN_EQUALS,
+            TERNARY_QUESTION, TERNARY_COLON,
 
             //Literals, arbitrary char length
             IDENTIFIER, STRING, NUMBER,

@@ -16,14 +16,55 @@ namespace Lox
         private List<Token> tokens;
         private int current = 0;
 
-        Parser(List<Token> tokens)
+        public Parser(List<Token> tokens)
         {
             this.tokens = tokens;
         }
 
+        public Expr<T> parse()
+        {
+            try
+            {
+                return expression();
+            }
+            catch (ParseError _)
+            {
+                return null;
+            }
+        }
+
         private Expr<T> expression()
         {
-            return equality();
+            Expr<T> expr = ternaryExpression();
+
+            while (match(TokenType.COMMA))
+            {
+                Token _operator = previous();
+                Expr<T> right = term();
+                expr = new Expr<T>.BinaryExpr(expr, _operator, right);
+            }
+
+            return expr;
+        }
+
+        private Expr<T> ternaryExpression()
+        {
+            Expr<T> expr = equality(); //Comparison expression
+            Expr<T> trueExpression; //Result if comparison is true
+
+            if (match(TokenType.TERNARY_QUESTION))
+            {
+                trueExpression = equality();
+                if(match(TokenType.TERNARY_COLON))
+                {
+                    Expr<T> falseExpression = equality(); //Result if comparison is false.
+                    Expr<T> temp = expr;
+                    expr = new Expr<T>.TernaryExpr(temp, trueExpression, falseExpression);
+
+                }
+            }
+
+            return expr;
         }
 
         private Expr<T> equality()
@@ -106,6 +147,17 @@ namespace Lox
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Expr<T>.Grouping(expr);
             }
+
+            //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.
+            if (match(TokenType.EQUALS_EQUALS, TokenType.EXCLAMATION_EQUALS, TokenType.GREATER_THAN, TokenType.GREATER_THAN_EQUALS,
+                      TokenType.LESS_THAN, TokenType.LESS_THAN_EQUALS, TokenType.FORWARD_SLASH, TokenType.ASTERISK, TokenType.MINUS, TokenType.PLUS))
+            {
+                Token peekToken = previous();
+                expression(); //Discard right-hand expression.
+                throw error(peekToken, "Expected expression before binary operator.");
+            }
+
+            throw error(peek(), "Expect expression.");
         }
 
         private Boolean match(params TokenType[] types)
@@ -125,7 +177,7 @@ namespace Lox
         {
             if (check(type)) return advance();
 
-            throw new System.Exception(peek().toString()+" "+message);
+            throw error(peek(), message);
         }
 
         private Boolean check(TokenType type)

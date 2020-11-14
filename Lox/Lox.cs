@@ -55,13 +55,19 @@ namespace Lox
         static void run(string fileBytes)
         {
             List<Token> tokens = Token.Tokenize(fileBytes);
+            Parser<string> parser = new Parser<string>(tokens);
+            Expr<string> expression = parser.parse();
+
+            if (hadError) return;
+
+            Console.WriteLine(new AstPrinter().print(expression));
+
             //Scanner scanner = new Scanner(fileBytes);
             //List<Token> tokens = scanner.scanTokens();
-
-            for(int i = 0; i < tokens.Count; i++)
+            /*for(int i = 0; i < tokens.Count; i++)
             {
                 Console.WriteLine(tokens.ElementAt(i).toString());
-            }
+            }*/
 
         }
 

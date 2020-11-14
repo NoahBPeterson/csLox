@@ -10,6 +10,25 @@ namespace Lox
     {
         public abstract T accept(Visitor<T> visitor);
 
+
+        public class TernaryExpr : Expr<T>
+        {
+            public readonly Expr<T> comparisonExpression;
+            public readonly Expr<T> trueExpression;
+            public readonly Expr<T> falseExpression;
+
+            public TernaryExpr(Expr<T> comparisonExpression, Expr<T> trueExpression, Expr<T> falseExpression)
+            {
+                this.comparisonExpression = comparisonExpression;
+                this.trueExpression = trueExpression;
+                this.falseExpression = falseExpression;
+            }
+
+            public override T accept(Visitor<T> visitor)
+            {
+                return visitor.visitTernaryExpr(this);
+            }
+        }
         public class BinaryExpr : Expr<T>
         {
             public readonly Expr<T> left;
@@ -79,6 +98,7 @@ namespace Lox
     }
     public interface Visitor<T>
     {
+        T visitTernaryExpr(Expr<T>.TernaryExpr ternaryExpr);
         T visitBinaryExpr(Expr<T>.BinaryExpr binaryExpr);
         T visitUnaryExpr(Expr<T>.UnaryExpr unaryExpr);
         T visitGroupingExpr(Expr<T>.Grouping grouping);
