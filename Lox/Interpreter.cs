@@ -71,6 +71,8 @@ namespace Lox
                     throw new RuntimeError(binaryExpr.operatorToken, "Operands must be numbers or strings.");
                 case TokenType.FORWARD_SLASH:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
+                    if ((double)right == 0) 
+                        throw new RuntimeError(binaryExpr.operatorToken, "Cannot divide by zero.");
                     return (double)left / (double)right;
                 case TokenType.ASTERISK:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
