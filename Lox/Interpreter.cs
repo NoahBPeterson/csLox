@@ -33,6 +33,24 @@ namespace Lox
             statement.accept<object>(this);
         }
 
+        private void executeBlock(List<Statement> statements, Environment environment)
+        {
+            Environment previous = this.environment;
+            try
+            {
+                this.environment = environment;
+
+                foreach (Statement statement in statements)
+                {
+                    execute(statement);
+                }
+            }
+            finally
+            {
+                this.environment = previous;
+            }
+        }
+
         public object visitBinaryExpr(Expr.BinaryExpr binaryExpr)
         {
             Object left = evaluate(binaryExpr.left);
@@ -204,7 +222,15 @@ namespace Lox
 
         public object visitAssignExpr(Expr.AssignExpr assignExpr)
         {
+            Object value = evaluate(assignExpr.value);
+            environment.assign(assignExpr.name, value);
             throw new NotImplementedException();
+        }
+
+        public object visitBlockStatement(Statement.Block blockStmt)
+        {
+            executeBlock(blockStmt.statements, new Environment(environment));
+            return null;
         }
     }
 }

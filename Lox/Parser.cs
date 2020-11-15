@@ -34,8 +34,7 @@ namespace Lox
 
         private Expr expression()
         {
-            return assignment();/*
-            Expr expr = ternaryExpression();
+            Expr expr = assignment();
 
             while (match(TokenType.COMMA))
             {
@@ -44,7 +43,7 @@ namespace Lox
                 expr = new Expr.BinaryExpr(expr, _operator, right);
             }
 
-            return expr;*/
+            return expr;
         }
 
         private Statement declaration()
@@ -67,6 +66,10 @@ namespace Lox
             if(match(TokenType.PRINT))
             {
                 return printStatement();
+            }
+            if(match(TokenType.LEFT_BRACE))
+            {
+                return new Statement.Block(block());
             }
             return expressionStatement();
         }
@@ -98,9 +101,22 @@ namespace Lox
             return new Statement.Expression(expr);
         }
 
+        private List<Statement> block()
+        {
+            List<Statement> statements = new List<Statement>();
+
+            while(!check(TokenType.RIGHT_BRACE) && !isAtEnd())
+            {
+                statements.Add(declaration());
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+            return statements;
+        }
+
         private Expr assignment()
         {
-            Expr expr = equality();
+            Expr expr = ternaryExpression();
 
             if(match(TokenType.EQUALS))
             {

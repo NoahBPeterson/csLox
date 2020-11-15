@@ -49,8 +49,24 @@ namespace Lox
                 return visitor.visitVarStatement(this);
             }
         }
+
+        public class Block : Statement
+        {
+            public readonly List<Statement> statements;
+
+            public Block(List<Statement> statements)
+            {
+                this.statements = statements;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitBlockStatement(this);
+            }
+        }
         public interface Visitor<T>
         {
+            T visitBlockStatement(Statement.Block blockStmt);
             T visitPrintStatement(Statement.Print printStmt);
             T visitExprStatement(Statement.Expression exprStmt);
             T visitVarStatement(Statement.Var varStmt);
