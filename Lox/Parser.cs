@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +8,11 @@ using static Lox.Token;
 
 namespace Lox
 {
-    public class Parser<T>
+    public class Parser
     {
         private class ParseError : Exception
         {
-
+            public ParseError() { }
         }
         private List<Token> tokens;
         private int current = 0;
@@ -21,20 +22,19 @@ namespace Lox
             this.tokens = tokens;
         }
 
-        public Expr parse()
+        public List<Statement> parse()
         {
-            try
+            List<Statement> statements = new List<Statement>();
+            while(!isAtEnd())
             {
-                return expression();
+                statements.Add(declaration());
             }
-            catch (ParseError)
-            {
-                return null;
-            }
+            return statements;
         }
 
         private Expr expression()
         {
+            return assignment();/*
             Expr expr = ternaryExpression();
 
             while (match(TokenType.COMMA))
@@ -44,6 +44,76 @@ namespace Lox
                 expr = new Expr.BinaryExpr(expr, _operator, right);
             }
 
+            return expr;*/
+        }
+
+        private Statement declaration()
+        {
+            try
+            {
+                if (match(TokenType.VAR))
+                    return varDeclaration();
+                return statement();
+            }
+            catch (ParseError)
+            {
+                synchronize();
+                return null;
+            }
+        }
+
+        private Statement statement()
+        {
+            if(match(TokenType.PRINT))
+            {
+                return printStatement();
+            }
+            return expressionStatement();
+        }
+
+        private Statement printStatement()
+        {
+            Expr value = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after value.");
+            return new Statement.Print(value);
+        }
+
+        private Statement varDeclaration()
+        {
+            Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+            Expr initializer = null;
+            if(match(TokenType.EQUALS))
+            {
+                initializer = expression();
+            }
+            consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+            return new Statement.Var(name, initializer);
+        }
+
+        private Statement expressionStatement()
+        {
+            Expr expr = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+            return new Statement.Expression(expr);
+        }
+
+        private Expr assignment()
+        {
+            Expr expr = equality();
+
+            if(match(TokenType.EQUALS))
+            {
+                Token equals = previous();
+                Expr value = assignment();
+
+                if(expr.GetType() == typeof(Expr.Variable))
+                {
+                    Token name = ((Expr.Variable)expr).name;
+                    return new Expr.AssignExpr(name, value);
+                }
+                error(equals, "Invalid assignment target.");
+            }
             return expr;
         }
 
@@ -146,6 +216,11 @@ namespace Lox
                 Expr expr = expression();
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Expr.Grouping(expr);
+            }
+
+            if(match(TokenType.IDENTIFIER))
+            {
+                return new Expr.Variable(previous());
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.

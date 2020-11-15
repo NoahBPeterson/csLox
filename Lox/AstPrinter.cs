@@ -38,6 +38,16 @@ namespace Lox
             return parenthesize(expr.operatorToken.lexeme, new Expr[] { expr.right });
         }
 
+        public string visitVariable(Expr.Variable variable)
+        {
+            return parenthesize(variable.name.lexeme, new Expr[] { variable });
+        }
+
+        public string visitAssignExpr(Expr.AssignExpr assignExpr)
+        {
+            return parenthesize(assignExpr.name.lexeme, new Expr[] { assignExpr.value });
+        }
+
         private string parenthesize(string name, Expr[] exprs)
         {
             StringBuilder builder = new StringBuilder();
@@ -52,5 +62,7 @@ namespace Lox
 
             return builder.ToString();
         }
+
+
     }
 }

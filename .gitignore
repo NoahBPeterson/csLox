@@ -7,3 +7,8 @@
 /obj/x86/Debug
 /.vs
 /.editorconfig
+/obj/x86/Release
+/packages/System.Collections.NonGeneric.4.3.0
+/packages.config
+/app.config
+/bin/Release

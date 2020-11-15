@@ -6,14 +6,17 @@ using static Lox.Token;
 
 namespace Lox
 {
-    public class Interpreter : Visitor<Object>
+    public class Interpreter : Visitor<Object>, Statement.Visitor<Object>
     {
-        public void interpret(Expr expression)
+        private Environment environment = new Environment();
+        public void interpret(List<Statement> statements)
         {
             try
             {
-                Object value = evaluate(expression);
-                Console.WriteLine(stringify(value));
+                foreach (Statement statement in statements)
+                {
+                    execute(statement);
+                }
             }
             catch (RuntimeError error)
             {
@@ -23,6 +26,11 @@ namespace Lox
         private Object evaluate(Expr expr)
         {
             return expr.accept(this);
+        }
+
+        private void execute(Statement statement)
+        {
+            statement.accept<object>(this);
         }
 
         public object visitBinaryExpr(Expr.BinaryExpr binaryExpr)
@@ -164,6 +172,39 @@ namespace Lox
             }
 
             return _object.ToString();
+        }
+
+        object Statement.Visitor<object>.visitPrintStatement(Statement.Print printStmt)
+        {
+            Object value = evaluate(printStmt.expression);
+            Console.WriteLine(stringify(value));
+            return null;
+        }
+
+        object Statement.Visitor<object>.visitExprStatement(Statement.Expression exprStmt)
+        {
+            evaluate(exprStmt.expression);
+            return null;
+        }
+        public object visitVariable(Expr.Variable variable)
+        {
+            return environment.get(variable.name);
+        }
+
+        public object visitVarStatement(Statement.Var varStmt)
+        {
+            Object value = null;
+            if(varStmt.initializer != null)
+            {
+                value = evaluate(varStmt.initializer);
+            }
+            environment.define(varStmt.name.lexeme, value);
+            return null;
+        }
+
+        public object visitAssignExpr(Expr.AssignExpr assignExpr)
+        {
+            throw new NotImplementedException();
         }
     }
 }

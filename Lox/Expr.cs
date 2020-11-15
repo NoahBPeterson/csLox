@@ -95,14 +95,49 @@ namespace Lox
             }
         }
 
+        public class Variable : Expr
+        {
+            public readonly Token name;
+
+            public Variable(Token name)
+            {
+                this.name = name;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitVariable(this);
+            }
+        }
+
+        public class AssignExpr : Expr
+        {
+            public readonly Token name;
+            public readonly Expr value;
+
+            public AssignExpr(Token name, Expr value)
+            {
+                this.name = name;
+                this.value = value;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitAssignExpr(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
+        T visitAssignExpr(Expr.AssignExpr assignExpr);
         T visitTernaryExpr(Expr.TernaryExpr ternaryExpr);
         T visitBinaryExpr(Expr.BinaryExpr binaryExpr);
         T visitUnaryExpr(Expr.UnaryExpr unaryExpr);
         T visitGroupingExpr(Expr.Grouping grouping);
         T visitLiteralExpr(Expr.Literal literal);
+
+        T visitVariable(Expr.Variable variable);
     }
 
 }

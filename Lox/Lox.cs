@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace Lox
 {
@@ -18,7 +19,7 @@ namespace Lox
             if(args.Length > 1)
             {
                 Console.WriteLine("Usage: Lox [script]");
-                Environment.Exit(64);
+                System.Environment.Exit(64);
             }else if(args.Length == 1)
             {
                 runFile(args[0]);
@@ -37,11 +38,11 @@ namespace Lox
 
                 if (hadError)
                 {
-                    Environment.Exit(65);
+                    System.Environment.Exit(65);
                 }
                 if(hadRuntimeError)
                 {
-                    Environment.Exit(70);
+                    System.Environment.Exit(70);
                 }
 
             }
@@ -61,14 +62,14 @@ namespace Lox
         static void run(string fileBytes)
         {
             List<Token> tokens = Token.Tokenize(fileBytes);
-            Parser<Object> parser = new Parser<Object>(tokens);
-            Expr expression = parser.parse();
+            Parser parser = new Parser(tokens);
+            List<Statement> statements = parser.parse();
 
-            //if (hadError) return;
+            if (hadError) return;
 
-            interpreter.interpret(expression);
+            interpreter.interpret(statements);
 
-            Console.WriteLine(new AstPrinter().print(expression));
+            //Console.WriteLine(new AstPrinter().print(expression));
 
             //Scanner scanner = new Scanner(fileBytes);
             //List<Token> tokens = scanner.scanTokens();
@@ -94,7 +95,7 @@ namespace Lox
         {
             if (token.type == Token.TokenType.EOF)
             {
-                report(token.line, "at end", message);
+                report(token.line, " at end", message);
             }else
             {
                 report(token.line, " at '" + token.lexeme + "'", message);
