@@ -22,13 +22,20 @@ namespace Lox
         }
         public void define(String name, Object value)
         {
-            values.Add(name, value);
+            if (!values.ContainsKey(name))
+            {
+                values.Add(name, value);
+                return;
+            }
+            throw new RuntimeError(new Token(Token.TokenType.VAR, name, value, 0), "The var "+name+" has already been defined.");
+                
         }
 
         public Object get(Token name)
         {
             if(values.ContainsKey(name.lexeme))
             {
+                if (values[name.lexeme] == null) throw new RuntimeError(name, "Variable '"+name.lexeme+"' has not been initialized.");
                 return values[name.lexeme];
             }
             if (enclosing != null) return enclosing.get(name);

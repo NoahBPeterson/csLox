@@ -129,8 +129,6 @@ namespace Lox
             {
                 return evaluate(ternaryExpr.falseExpression);
             }
-
-            throw new NotImplementedException();
         }
 
         public object visitUnaryExpr(Expr.UnaryExpr unaryExpr)
@@ -224,7 +222,7 @@ namespace Lox
         {
             Object value = evaluate(assignExpr.value);
             environment.assign(assignExpr.name, value);
-            throw new NotImplementedException();
+            return null;
         }
 
         public object visitBlockStatement(Statement.Block blockStmt)

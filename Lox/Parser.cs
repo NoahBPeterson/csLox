@@ -97,8 +97,12 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-            return new Statement.Expression(expr);
+            if(expr.GetType() == typeof(Expr.AssignExpr))
+            {
+                consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+                return new Statement.Expression(expr);
+            }
+            return new Statement.Print(expr);
         }
 
         private List<Statement> block()
