@@ -13,7 +13,7 @@ Todo: ☐ ☑ ☒
 
 ☑ Evaluator
 
-☐ Statements
+☑ Statements
 
 ☐ Control Flow
 
