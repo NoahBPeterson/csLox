@@ -64,8 +64,64 @@ namespace Lox
                 return visitor.visitBlockStatement(this);
             }
         }
+
+        public class ifStmt : Statement
+        {
+            public readonly Expr condition;
+            public readonly Statement thenBranch;
+            public readonly Statement elseBranch;
+
+            public ifStmt(Expr c, Statement tB, Statement eB)
+            {
+                condition = c;
+                thenBranch = tB;
+                elseBranch = eB;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitIfStatement(this);
+            }
+
+        }
+
+        public class whileStmt : Statement
+        {
+            public readonly Expr condition;
+            public readonly Statement body;
+
+            public whileStmt(Expr c, Statement b)
+            {
+                condition = c;
+                body = b;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitWhileStatement(this);
+            }
+        }
+
+            public class breakStmt : Statement
+            {
+
+                public breakStmt()
+                {
+                }
+
+                public override T accept<T>(Visitor<T> visitor)
+                {
+                    return visitor.visitBreakStatement(this);
+                }
+
+            }
+
+
         public interface Visitor<T>
         {
+            T visitBreakStatement(Statement.breakStmt breakStmt);
+            T visitWhileStatement(Statement.whileStmt whileStmt);
+            T visitIfStatement(Statement.ifStmt ifStmt);
             T visitBlockStatement(Statement.Block blockStmt);
             T visitPrintStatement(Statement.Print printStmt);
             T visitExprStatement(Statement.Expression exprStmt);

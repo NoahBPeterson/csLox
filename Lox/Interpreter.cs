@@ -9,6 +9,8 @@ namespace Lox
     public class Interpreter : Visitor<Object>, Statement.Visitor<Object>
     {
         private Environment environment = new Environment();
+        private bool _break = false;
+        private bool _loop = false;
         public void interpret(List<Statement> statements)
         {
             try
@@ -23,7 +25,7 @@ namespace Lox
                 Lox.runtimeError(error);
             }
         }
-        private Object evaluate(Expr expr)
+        private object evaluate(Expr expr)
         {
             return expr.accept(this);
         }
@@ -42,7 +44,14 @@ namespace Lox
 
                 foreach (Statement statement in statements)
                 {
-                    execute(statement);
+                    if(!_break)
+                    {
+                        execute(statement);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             finally
@@ -53,8 +62,8 @@ namespace Lox
 
         public object visitBinaryExpr(Expr.BinaryExpr binaryExpr)
         {
-            Object left = evaluate(binaryExpr.left);
-            Object right = evaluate(binaryExpr.right);
+            object left = evaluate(binaryExpr.left);
+            object right = evaluate(binaryExpr.right);
 
             switch(binaryExpr.operatorToken.type)
             {
@@ -133,7 +142,7 @@ namespace Lox
 
         public object visitUnaryExpr(Expr.UnaryExpr unaryExpr)
         {
-            Object right = evaluate(unaryExpr.right);
+            object right = evaluate(unaryExpr.right);
 
             switch (unaryExpr.operatorToken.type)
             {
@@ -145,20 +154,20 @@ namespace Lox
             }
             return null;
         }
-        private void checkNumberOperand(Token _operator, Object operand)
+        private void checkNumberOperand(Token _operator, object operand)
         {
             if (operand.GetType() == typeof(double))
                 return;
             throw new RuntimeError(_operator, "Operand must be a number.");
         }
-        private void checkNumberOperand(Token _operator, Object operand, Object operandTwo)
+        private void checkNumberOperand(Token _operator, object operand, object operandTwo)
         {
             if (operand.GetType() == typeof(double) && operandTwo.GetType() == typeof(double))
                 return;
             throw new RuntimeError(_operator, "Operand must be a number.");
         }
 
-        private bool isTruthy(Object objectA)
+        private bool isTruthy(object objectA)
         {
             if (objectA == null) 
                 return false;
@@ -166,7 +175,7 @@ namespace Lox
                 return (bool) objectA;
             return true;
         }
-        private bool isEqual(Object a, Object b)
+        private bool isEqual(object a, object b)
         {
             if (a == null && b == null) return true;
             if (a == null) return false;
@@ -174,7 +183,7 @@ namespace Lox
             return a.Equals(b);
         }
 
-        private string stringify(Object _object)
+        private string stringify(object _object)
         {
             if (_object == null) return "nil";
 
@@ -192,7 +201,7 @@ namespace Lox
 
         object Statement.Visitor<object>.visitPrintStatement(Statement.Print printStmt)
         {
-            Object value = evaluate(printStmt.expression);
+            object value = evaluate(printStmt.expression);
             Console.WriteLine(stringify(value));
             return null;
         }
@@ -220,7 +229,7 @@ namespace Lox
 
         public object visitAssignExpr(Expr.AssignExpr assignExpr)
         {
-            Object value = evaluate(assignExpr.value);
+            object value = evaluate(assignExpr.value);
             environment.assign(assignExpr.name, value);
             return null;
         }
@@ -228,6 +237,51 @@ namespace Lox
         public object visitBlockStatement(Statement.Block blockStmt)
         {
             executeBlock(blockStmt.statements, new Environment(environment));
+            return null;
+        }
+
+        public object visitIfStatement(Statement.ifStmt ifStmt)
+        {
+            if(isTruthy(evaluate(ifStmt.condition)))
+            {
+                execute(ifStmt.thenBranch);
+            }else if(ifStmt.elseBranch != null)
+            {
+                execute(ifStmt.elseBranch);
+            }
+            return null;
+        }
+
+        public object visitLogicalExpr(Expr.logicalExpr logicalExpr)
+        {
+            object left = evaluate(logicalExpr.left);
+
+            if (logicalExpr._operator.type == TokenType.OR)
+            {
+                if (isTruthy(left)) return left;
+            }
+            else
+            {
+                if (!isTruthy(left)) return left;
+            }
+            return evaluate(logicalExpr.right);
+        }
+
+        public object visitWhileStatement(Statement.whileStmt stmt)
+        {
+            while(isTruthy(evaluate(stmt.condition)) && !_break)
+            {
+                _loop = true;
+                execute(stmt.body);
+            }
+            _loop = false;
+            _break = false;
+            return null;
+        }
+
+        public object visitBreakStatement(Statement.breakStmt breakStmt)
+        {
+            _break = true;
             return null;
         }
     }

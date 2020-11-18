@@ -69,11 +69,11 @@ namespace Lox
 
             interpreter.interpret(statements);
 
-            //Console.WriteLine(new AstPrinter().print(expression));
+            /*Console.WriteLine(new AstPrinter().print(expression));
 
-            //Scanner scanner = new Scanner(fileBytes);
-            //List<Token> tokens = scanner.scanTokens();
-            /*for(int i = 0; i < tokens.Count; i++)
+            Scanner scanner = new Scanner(fileBytes);
+            List<Token> tokens = scanner.scanTokens();
+            for(int i = 0; i < tokens.Count; i++)
             {
                 Console.WriteLine(tokens.ElementAt(i).toString());
             }*/

@@ -16,6 +16,7 @@ namespace Lox
         }
         private List<Token> tokens;
         private int current = 0;
+        private bool parsingLoop = false;
 
         public Parser(List<Token> tokens)
         {
@@ -71,7 +72,94 @@ namespace Lox
             {
                 return new Statement.Block(block());
             }
+            if(match(TokenType.IF))
+            {
+                return ifStatement();
+            }
+            if(match(TokenType.WHILE))
+            {
+                return whileStatement();
+            }
+            if(match(TokenType.FOR))
+            {
+                return forStatement();
+            }
+            if (match(TokenType.BREAK))
+            {
+                if(parsingLoop)
+                {
+                    consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
+                    return new Statement.breakStmt();
+                }else
+                {
+                    error(previous(), "Cannot use break statement outside of loop structure.");
+                    consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
+                }
+            }
             return expressionStatement();
+        }
+
+        private Statement forStatement()
+        {
+            consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+            Statement initializer;
+            if(match(TokenType.SEMICOLON))
+            {
+                initializer = null;
+            } else if(match(TokenType.VAR))
+            {
+                initializer = varDeclaration();
+            } else
+            {
+                initializer = expressionStatement();
+            }
+
+            Expr condition = null;
+            if(!check(TokenType.SEMICOLON))
+            {
+                condition = expression();
+            }
+            consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            Expr increment = null;
+            if(!check(TokenType.RIGHT_PAREN))
+            {
+                increment = expression();
+            }
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+            parsingLoop = true;
+            Statement body = statement();
+            parsingLoop = false;
+            if(increment != null)
+            {
+                body = new Statement.Block(new List<Statement> { body, new Statement.Expression(increment) });
+            }
+
+            if (condition == null) condition = new Expr.Literal(true);
+            body = new Statement.whileStmt(condition, body);
+
+            if(initializer != null)
+            {
+                body = new Statement.Block(new List<Statement> { initializer, body });
+            }
+
+            return body;
+        }
+
+        private Statement ifStatement()
+        {
+            consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+            Expr condition = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+
+            Statement thenBranch = statement();
+            Statement elseBranch = null;
+            if(match(TokenType.ELSE))
+            {
+                elseBranch = statement();
+            }
+
+            return new Statement.ifStmt(condition, thenBranch, elseBranch);
         }
 
         private Statement printStatement()
@@ -92,6 +180,17 @@ namespace Lox
             }
             consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
             return new Statement.Var(name, initializer);
+        }
+
+        private Statement whileStatement()
+        {
+            consume(TokenType.LEFT_PAREN, "Expct '(' after 'while'.");
+            Expr condition = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+            parsingLoop = true;
+            Statement body = statement();
+            parsingLoop = false;
+            return new Statement.whileStmt(condition, body);
         }
 
         private Statement expressionStatement()
@@ -120,7 +219,7 @@ namespace Lox
 
         private Expr assignment()
         {
-            Expr expr = ternaryExpression();
+            Expr expr = or();
 
             if(match(TokenType.EQUALS))
             {
@@ -134,6 +233,34 @@ namespace Lox
                 }
                 error(equals, "Invalid assignment target.");
             }
+            return expr;
+        }
+
+        private Expr or()
+        {
+            Expr expr = and();
+
+            while (match(TokenType.OR))
+            {
+                Token _operator = previous();
+                Expr right = and();
+                expr = new Expr.logicalExpr(expr, _operator, right);
+            }
+
+            return expr;
+        }
+
+        private Expr and()
+        {
+            Expr expr = ternaryExpression();
+
+            while(match(TokenType.AND))
+            {
+                Token _operator = previous();
+                Expr right = ternaryExpression();
+                expr = new Expr.logicalExpr(expr, _operator, right);
+            }
+
             return expr;
         }
 
@@ -225,6 +352,7 @@ namespace Lox
             if (match(TokenType.FALSE)) return new Expr.Literal(false);
             if (match(TokenType.TRUE)) return new Expr.Literal(true);
             if (match(TokenType.NIL)) return new Expr.Literal(null);
+            
 
             if(match(TokenType.NUMBER, TokenType.STRING))
             {

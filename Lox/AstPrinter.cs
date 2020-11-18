@@ -63,6 +63,9 @@ namespace Lox
             return builder.ToString();
         }
 
-
+        public string visitLogicalExpr(Expr.logicalExpr logicalExpr)
+        {
+            return parenthesize(logicalExpr._operator.lexeme, new Expr[] { logicalExpr.left, logicalExpr.right });
+        }
     }
 }

@@ -127,9 +127,29 @@ namespace Lox
             }
         }
 
+        public class logicalExpr : Expr
+        {
+            public readonly Expr left;
+            public readonly Token _operator;
+            public readonly Expr right;
+
+            public logicalExpr(Expr l, Token o, Expr r)
+            {
+                left = l;
+                _operator = o;
+                right = r;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitLogicalExpr(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
+        T visitLogicalExpr(Expr.logicalExpr logicalExpr);
         T visitAssignExpr(Expr.AssignExpr assignExpr);
         T visitTernaryExpr(Expr.TernaryExpr ternaryExpr);
         T visitBinaryExpr(Expr.BinaryExpr binaryExpr);
