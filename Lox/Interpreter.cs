@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lox.NativeFunctions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,16 @@ namespace Lox
 {
     public class Interpreter : Visitor<Object>, Statement.Visitor<Object>
     {
-        private Environment environment = new Environment();
+        public readonly Environment globals = new Environment();
+        private Environment environment;
         private bool _break = false;
         private bool _loop = false;
+
+        public Interpreter()
+        {
+            environment = globals;
+            globals.define("clock", new Clock());
+        }
         public void interpret(List<Statement> statements)
         {
             try
@@ -35,7 +43,7 @@ namespace Lox
             statement.accept<object>(this);
         }
 
-        private void executeBlock(List<Statement> statements, Environment environment)
+        public void executeBlock(List<Statement> statements, Environment environment)
         {
             Environment previous = this.environment;
             try
@@ -67,6 +75,8 @@ namespace Lox
 
             switch(binaryExpr.operatorToken.type)
             {
+                case TokenType.COMMA:
+                    return right;
                 case TokenType.GREATER_THAN:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     return (double)left > (double)right;
@@ -282,6 +292,38 @@ namespace Lox
         public object visitBreakStatement(Statement.breakStmt breakStmt)
         {
             _break = true;
+            return null;
+        }
+
+        public object visitCallExpr(Expr.Call call)
+        {
+            Object callee = evaluate(call.callee);
+
+            List<Object> arguments = new List<Object>();
+            foreach (Expr argument in call.arguments)
+            {
+                arguments.Add(evaluate(argument));
+            }
+
+            if(!(callee is LoxCallable))// && !(callee is Statement.function) && !(callee is Clock))
+            {
+                throw new RuntimeError(call.paren, "Can only call functions and classes.");
+            }
+
+            LoxCallable function = (LoxCallable)callee;
+            if(arguments.Count != function.arity())
+            {
+                throw new RuntimeError(call.paren, "Expected " +
+                    function.arity() + " arguments but got " +
+                    arguments.Count + ".");
+            }
+            return function.call(this, arguments);
+        }
+
+        public object visitFunction(Statement.function func)
+        {
+            LoxFunction function = new LoxFunction(func);
+            environment.define(func.name.lexeme, function);
             return null;
         }
     }

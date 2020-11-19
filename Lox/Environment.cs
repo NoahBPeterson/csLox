@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lox
 {
-    class Environment
+    public class Environment
     {
         public Environment enclosing;
         private Dictionary<String, Object> values = new Dictionary<string, object>();

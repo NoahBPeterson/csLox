@@ -67,5 +67,15 @@ namespace Lox
         {
             return parenthesize(logicalExpr._operator.lexeme, new Expr[] { logicalExpr.left, logicalExpr.right });
         }
+
+        public string visitCallExpr(Expr.Call call)
+        {
+            Expr[] expressions = new Expr[call.arguments.Count];
+            for(int i = 0; i < call.arguments.Count; i++)
+            {
+                expressions[i] = call.arguments[i];
+            }
+            return parenthesize("()", expressions);
+        }
     }
 }

@@ -65,6 +65,25 @@ namespace Lox
             }
         }
 
+        public class function : Statement
+        {
+            public readonly Token name;
+            public readonly List<Token> _params;
+            public readonly List<Statement> body;
+            
+            public function(Token n, List<Token> p, List<Statement> b)
+            {
+                name = n;
+                _params = p;
+                body = b;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitFunction(this);
+            }
+        }
+
         public class ifStmt : Statement
         {
             public readonly Expr condition;
@@ -119,6 +138,7 @@ namespace Lox
 
         public interface Visitor<T>
         {
+            T visitFunction(Statement.function func);
             T visitBreakStatement(Statement.breakStmt breakStmt);
             T visitWhileStatement(Statement.whileStmt whileStmt);
             T visitIfStatement(Statement.ifStmt ifStmt);

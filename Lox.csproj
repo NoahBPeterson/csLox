@@ -123,6 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lox\Environment.cs" />
+    <Compile Include="Lox\LoxCallable.cs" />
+    <Compile Include="Lox\LoxFunction.cs" />
+    <Compile Include="Lox\NativeFunctions\Clock.cs" />
     <Compile Include="Lox\Statement.cs" />
     <Compile Include="Lox\Interpreter.cs" />
     <Compile Include="Lox\Parser.cs" />

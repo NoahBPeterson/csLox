@@ -65,6 +65,25 @@ namespace Lox
             }
         }
 
+        public class Call : Expr
+        {
+            public readonly Expr callee;
+            public readonly Token paren;
+            public readonly List<Expr> arguments;
+
+            public Call(Expr c, Token p, List<Expr> a)
+            {
+                callee = c;
+                paren = p;
+                arguments = a;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitCallExpr(this);
+            }
+        }
+
         public class Grouping : Expr
         {
             public readonly Expr expression; // "(" expr ")"
@@ -149,6 +168,7 @@ namespace Lox
     }
     public interface Visitor<T>
     {
+        T visitCallExpr(Expr.Call call);
         T visitLogicalExpr(Expr.logicalExpr logicalExpr);
         T visitAssignExpr(Expr.AssignExpr assignExpr);
         T visitTernaryExpr(Expr.TernaryExpr ternaryExpr);

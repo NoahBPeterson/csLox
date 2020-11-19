@@ -37,12 +37,7 @@ namespace Lox
         {
             Expr expr = assignment();
 
-            while (match(TokenType.COMMA))
-            {
-                Token _operator = previous();
-                Expr right = term();
-                expr = new Expr.BinaryExpr(expr, _operator, right);
-            }
+
 
             return expr;
         }
@@ -51,6 +46,8 @@ namespace Lox
         {
             try
             {
+                if (match(TokenType.FUNC))
+                    return function("function");
                 if (match(TokenType.VAR))
                     return varDeclaration();
                 return statement();
@@ -178,6 +175,12 @@ namespace Lox
             {
                 initializer = expression();
             }
+            while (match(TokenType.COMMA))
+            {
+                Token _operator = previous();
+                Expr right = term();
+                initializer = new Expr.BinaryExpr(initializer, _operator, right);
+            }
             consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
             return new Statement.Var(name, initializer);
         }
@@ -196,12 +199,34 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if(expr.GetType() == typeof(Expr.AssignExpr))
+            if (expr.GetType() == typeof(Expr.AssignExpr))
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
             }
             return new Statement.Print(expr);
+        }
+
+        private Statement.function function(String kind)
+        {
+            Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+            consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
+            List<Token> parameters = new List<Token>();
+            if(!check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (parameters.Count >= 255)
+                    {
+                        error(peek(), "Can't have more than 255 parameters.");
+                    }
+                    parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
+                } while (match(TokenType.COMMA));
+            }
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+            consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body.");
+            List<Statement> body = block();
+            return new Statement.function(name, parameters, body);
         }
 
         private List<Statement> block()
@@ -344,7 +369,46 @@ namespace Lox
                 Expr right = unary();
                 return new Expr.UnaryExpr(_operator, right);
             }
-            return primary();
+            return call();
+        }
+
+        private Expr finishCall(Expr callee)
+        {
+            List<Expr> arguments = new List<Expr>();
+            if(!check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if(arguments.Count >= 255)
+                    {
+                        error(peek(), "Can't have more than 255 arguments.");
+                    }
+                    arguments.Add(expression());
+                } while (match(TokenType.COMMA));
+            }
+
+            Token paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+            return new Expr.Call(callee, paren, arguments);
+        }
+
+        private Expr call()
+        {
+            Expr expr = primary();
+
+            while(true)
+            {
+                if(match(TokenType.LEFT_PAREN))
+                {
+                    expr = finishCall(expr);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            //if (match(TokenType.SEMICOLON)) consume(TokenType.SEMICOLON, "");
+            return expr;
         }
 
         private Expr primary()
