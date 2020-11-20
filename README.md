@@ -17,7 +17,7 @@ Todo: ☐ ☑ ☒
 
 ☑ Control Flow
 
-☐ Functions
+☑ Functions
 
 ☐ Resolving and Binding
 
