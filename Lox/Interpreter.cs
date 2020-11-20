@@ -28,7 +28,7 @@ namespace Lox
                     execute(statement);
                 }
             }
-            catch (RuntimeError error)
+            catch (Exceptions.RuntimeError error)
             {
                 Lox.runtimeError(error);
             }
@@ -113,11 +113,11 @@ namespace Lox
                     {
                         return (string)left + ((double)right).ToString();
                     }
-                    throw new RuntimeError(binaryExpr.operatorToken, "Operands must be numbers or strings.");
+                    throw new Exceptions.RuntimeError(binaryExpr.operatorToken, "Operands must be numbers or strings.");
                 case TokenType.FORWARD_SLASH:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     if ((double)right == 0) 
-                        throw new RuntimeError(binaryExpr.operatorToken, "Cannot divide by zero.");
+                        throw new Exceptions.RuntimeError(binaryExpr.operatorToken, "Cannot divide by zero.");
                     return (double)left / (double)right;
                 case TokenType.ASTERISK:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
@@ -168,13 +168,13 @@ namespace Lox
         {
             if (operand.GetType() == typeof(double))
                 return;
-            throw new RuntimeError(_operator, "Operand must be a number.");
+            throw new Exceptions.RuntimeError(_operator, "Operand must be a number.");
         }
         private void checkNumberOperand(Token _operator, object operand, object operandTwo)
         {
             if (operand.GetType() == typeof(double) && operandTwo.GetType() == typeof(double))
                 return;
-            throw new RuntimeError(_operator, "Operand must be a number.");
+            throw new Exceptions.RuntimeError(_operator, "Operand must be a number.");
         }
 
         private bool isTruthy(object objectA)
@@ -307,13 +307,13 @@ namespace Lox
 
             if(!(callee is LoxCallable))// && !(callee is Statement.function) && !(callee is Clock))
             {
-                throw new RuntimeError(call.paren, "Can only call functions and classes.");
+                throw new Exceptions.RuntimeError(call.paren, "Can only call functions and classes.");
             }
 
             LoxCallable function = (LoxCallable)callee;
             if(arguments.Count != function.arity())
             {
-                throw new RuntimeError(call.paren, "Expected " +
+                throw new Exceptions.RuntimeError(call.paren, "Expected " +
                     function.arity() + " arguments but got " +
                     arguments.Count + ".");
             }
@@ -322,9 +322,17 @@ namespace Lox
 
         public object visitFunction(Statement.function func)
         {
-            LoxFunction function = new LoxFunction(func);
+            LoxFunction function = new LoxFunction(func, environment);
             environment.define(func.name.lexeme, function);
             return null;
+        }
+
+        public object visitReturnStatement(Statement.Return returnStmt)
+        {
+            Object value = null;
+            if (returnStmt.value != null) value = evaluate(returnStmt.value);
+
+            throw new Exceptions.Return(value);
         }
     }
 }

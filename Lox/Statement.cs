@@ -134,10 +134,25 @@ namespace Lox
                 }
 
             }
+        public class Return : Statement
+        {
+            public readonly Token keyword;
+            public readonly Expr value;
 
+            public Return(Token k, Expr v)
+            {
+                keyword = k;
+                value = v;
+            }
 
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitReturnStatement(this);
+            }
+        }
         public interface Visitor<T>
         {
+            T visitReturnStatement(Statement.Return returnStmt);
             T visitFunction(Statement.function func);
             T visitBreakStatement(Statement.breakStmt breakStmt);
             T visitWhileStatement(Statement.whileStmt whileStmt);

@@ -61,26 +61,12 @@ namespace Lox
 
         private Statement statement()
         {
-            if(match(TokenType.PRINT))
-            {
-                return printStatement();
-            }
-            if(match(TokenType.LEFT_BRACE))
-            {
-                return new Statement.Block(block());
-            }
-            if(match(TokenType.IF))
-            {
-                return ifStatement();
-            }
-            if(match(TokenType.WHILE))
-            {
-                return whileStatement();
-            }
-            if(match(TokenType.FOR))
-            {
-                return forStatement();
-            }
+            if(match(TokenType.PRINT)) return printStatement();
+            if(match(TokenType.LEFT_BRACE)) return new Statement.Block(block());
+            if(match(TokenType.IF)) return ifStatement();
+            if(match(TokenType.RETURN)) return returnStatement();
+            if(match(TokenType.WHILE)) return whileStatement();
+            if(match(TokenType.FOR)) return forStatement();
             if (match(TokenType.BREAK))
             {
                 if(parsingLoop)
@@ -166,6 +152,18 @@ namespace Lox
             return new Statement.Print(value);
         }
 
+        private Statement returnStatement()
+        {
+            Token keyword = previous();
+            Expr value = null;
+            if(!check(TokenType.SEMICOLON))
+            {
+                value = expression();
+            }
+            consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+            return new Statement.Return(keyword, value);
+        }
+
         private Statement varDeclaration()
         {
             Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
@@ -199,7 +197,7 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr.GetType() == typeof(Expr.AssignExpr))
+            if (expr.GetType() == typeof(Expr.AssignExpr) || expr.GetType() == typeof(Expr.Call))
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);

@@ -102,7 +102,7 @@ namespace Lox
             }
         }
 
-        public static void runtimeError(RuntimeError error)
+        public static void runtimeError(Exceptions.RuntimeError error)
         {
             Console.WriteLine(error.Message + "\n[line " + error.token.line + "]");
             hadRuntimeError = true;

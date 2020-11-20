@@ -27,7 +27,7 @@ namespace Lox
                 values.Add(name, value);
                 return;
             }
-            throw new RuntimeError(new Token(Token.TokenType.VAR, name, value, 0), "The var "+name+" has already been defined.");
+            throw new Exceptions.RuntimeError(new Token(Token.TokenType.VAR, name, value, 0), "The var "+name+" has already been defined.");
                 
         }
 
@@ -35,11 +35,11 @@ namespace Lox
         {
             if(values.ContainsKey(name.lexeme))
             {
-                if (values[name.lexeme] == null) throw new RuntimeError(name, "Variable '"+name.lexeme+"' has not been initialized.");
+                if (values[name.lexeme] == null) throw new Exceptions.RuntimeError(name, "Variable '"+name.lexeme+"' has not been initialized.");
                 return values[name.lexeme];
             }
             if (enclosing != null) return enclosing.get(name);
-            throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+            throw new Exceptions.RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
         }
 
         public void assign(Token name, Object value)
@@ -56,7 +56,7 @@ namespace Lox
                 return;
             }
 
-            throw new RuntimeError(name, "Undefined variable '"
+            throw new Exceptions.RuntimeError(name, "Undefined variable '"
                 + name.lexeme + "'.");
         }
     }

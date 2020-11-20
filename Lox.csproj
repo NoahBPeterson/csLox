@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lox\Environment.cs" />
+    <Compile Include="Lox\Exceptions\Return.cs" />
     <Compile Include="Lox\LoxCallable.cs" />
     <Compile Include="Lox\LoxFunction.cs" />
     <Compile Include="Lox\NativeFunctions\Clock.cs" />
@@ -132,7 +133,7 @@
     <Compile Include="Lox\AstPrinter.cs" />
     <Compile Include="Lox\Expr.cs" />
     <Compile Include="Lox\Lox.cs" />
-    <Compile Include="Lox\RuntimeError.cs" />
+    <Compile Include="Lox\Exceptions\RuntimeError.cs" />
     <Compile Include="Lox\Scanner.cs" />
     <Compile Include="Lox\Token.cs" />
   </ItemGroup>
