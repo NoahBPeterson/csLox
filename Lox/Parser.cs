@@ -38,7 +38,6 @@ namespace Lox
             Expr expr = assignment();
 
 
-
             return expr;
         }
 
@@ -207,7 +206,12 @@ namespace Lox
 
         private Statement.function function(String kind)
         {
-            Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+            Token name = new Token(TokenType.FUNC, "lambda", null, peek().line);
+
+            if (!kind.Equals("lambda"))
+            {
+                name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+            }
             consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
             List<Token> parameters = new List<Token>();
             if(!check(TokenType.RIGHT_PAREN))
@@ -372,7 +376,7 @@ namespace Lox
 
         private Expr finishCall(Expr callee)
         {
-            List<Expr> arguments = new List<Expr>();
+            List<Object> arguments = new List<Object>();
             if(!check(TokenType.RIGHT_PAREN))
             {
                 do
@@ -381,7 +385,14 @@ namespace Lox
                     {
                         error(peek(), "Can't have more than 255 arguments.");
                     }
-                    arguments.Add(expression());
+                    if (match(TokenType.FUNC))
+                    {
+                        arguments.Add(function("lambda"));
+                    }
+                    else
+                    {
+                        arguments.Add(expression());
+                    }
                 } while (match(TokenType.COMMA));
             }
 

@@ -70,12 +70,18 @@ namespace Lox
 
         public string visitCallExpr(Expr.Call call)
         {
-            Expr[] expressions = new Expr[call.arguments.Count];
-            for(int i = 0; i < call.arguments.Count; i++)
+            Expr[] expressions = new Expr[call.expressionArguments.Count];
+            for(int i = 0; i < call.expressionArguments.Count; i++)
             {
-                expressions[i] = call.arguments[i];
+                if (call.expressionArguments[i] is Expr)
+                {
+                    expressions[i] = (Expr) call.expressionArguments[i];
+                } else if(call.expressionArguments[i] is Statement.function)
+                {
+                    expressions[i] = new Expr.Literal("<lambda>");
+                }
             }
-            return parenthesize("()", expressions);
+            return parenthesize("()", null);
         }
     }
 }

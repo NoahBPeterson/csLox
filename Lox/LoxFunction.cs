@@ -26,7 +26,12 @@ namespace Lox
             Environment environment = new Environment(closure);
             for(int i = 0; i < declaration._params.Count; i++)
             {
-                environment.define(declaration._params[i].lexeme, arguments[i]);
+                Object arg = arguments[i];
+                if(arguments[i] is Statement.function)
+                {
+                    arg = new LoxFunction((Statement.function) arguments[i], environment);
+                }
+                environment.define(declaration._params[i].lexeme, arg);
             }
             try
             {

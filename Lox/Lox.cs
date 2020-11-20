@@ -63,7 +63,7 @@ namespace Lox
         {
             List<Token> tokens = Token.Tokenize(fileBytes);
             Parser parser = new Parser(tokens);
-            List<Statement> statements = parser.parse();
+            List<Statement>  statements = parser.parse();
 
             if (hadError) return;
 

@@ -218,8 +218,7 @@ namespace Lox
 
         object Statement.Visitor<object>.visitExprStatement(Statement.Expression exprStmt)
         {
-            evaluate(exprStmt.expression);
-            return null;
+            return evaluate(exprStmt.expression);
         }
         public object visitVariable(Expr.Variable variable)
         {
@@ -300,12 +299,18 @@ namespace Lox
             Object callee = evaluate(call.callee);
 
             List<Object> arguments = new List<Object>();
-            foreach (Expr argument in call.arguments)
+            foreach (Object argument in call.expressionArguments)
             {
-                arguments.Add(evaluate(argument));
+                if (argument is Expr)
+                {
+                    arguments.Add(evaluate((Expr) argument));
+                } else if(argument is Statement.function)
+                {
+                    arguments.Add((Statement.function)argument);
+                }
             }
 
-            if(!(callee is LoxCallable))// && !(callee is Statement.function) && !(callee is Clock))
+            if(!(callee is LoxCallable))
             {
                 throw new Exceptions.RuntimeError(call.paren, "Can only call functions and classes.");
             }
@@ -323,8 +328,13 @@ namespace Lox
         public object visitFunction(Statement.function func)
         {
             LoxFunction function = new LoxFunction(func, environment);
-            environment.define(func.name.lexeme, function);
-            return null;
+            if (func.name != null) //If the function is named
+            {
+                environment.define(func.name.lexeme, function);
+                return null;
+            }
+
+            return function; //If the function is lambda
         }
 
         public object visitReturnStatement(Statement.Return returnStmt)

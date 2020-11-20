@@ -69,13 +69,21 @@ namespace Lox
         {
             public readonly Expr callee;
             public readonly Token paren;
-            public readonly List<Expr> arguments;
+            //public readonly List<Expr> arguments;
+            public readonly List<Object> expressionArguments;
 
-            public Call(Expr c, Token p, List<Expr> a)
+            /*public Call(Expr c, Token p, List<Expr> a)
             {
                 callee = c;
                 paren = p;
                 arguments = a;
+            }*/
+
+            public Call(Expr c, Token p, List<Object> expressionArgs)
+            {
+                callee = c;
+                paren = p;
+                expressionArguments = expressionArgs;
             }
 
             public override T accept<T>(Visitor<T> visitor)
@@ -83,6 +91,23 @@ namespace Lox
                 return visitor.visitCallExpr(this);
             }
         }
+
+        /*public class Lambda : Expr
+        {
+            public readonly List<Token> _params;
+            public readonly List<Statement> body;
+
+            public Lambda(List<Token> p, List<Statement> b)
+            {
+                _params = p;
+                body = b;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitLambdaExpr(this);
+            }
+        }*/
 
         public class Grouping : Expr
         {
@@ -168,6 +193,7 @@ namespace Lox
     }
     public interface Visitor<T>
     {
+        //T visitLambdaExpr(Expr.Lambda lambda);
         T visitCallExpr(Expr.Call call);
         T visitLogicalExpr(Expr.logicalExpr logicalExpr);
         T visitAssignExpr(Expr.AssignExpr assignExpr);
@@ -176,7 +202,6 @@ namespace Lox
         T visitUnaryExpr(Expr.UnaryExpr unaryExpr);
         T visitGroupingExpr(Expr.Grouping grouping);
         T visitLiteralExpr(Expr.Literal literal);
-
         T visitVariable(Expr.Variable variable);
     }
 
