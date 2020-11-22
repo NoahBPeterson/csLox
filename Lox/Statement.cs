@@ -123,9 +123,10 @@ namespace Lox
 
             public class breakStmt : Statement
             {
-
-                public breakStmt()
+                public readonly Token name;
+                public breakStmt(Token n)
                 {
+                    name = n;
                 }
 
                 public override T accept<T>(Visitor<T> visitor)

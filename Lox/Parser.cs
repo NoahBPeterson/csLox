@@ -71,7 +71,7 @@ namespace Lox
                 if(parsingLoop)
                 {
                     consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
-                    return new Statement.breakStmt();
+                    return new Statement.breakStmt(previous());
                 }else
                 {
                     error(previous(), "Cannot use break statement outside of loop structure.");

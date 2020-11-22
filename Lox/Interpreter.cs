@@ -10,6 +10,7 @@ namespace Lox
     public class Interpreter : Visitor<Object>, Statement.Visitor<Object>
     {
         public readonly Environment globals = new Environment();
+        private readonly Dictionary<Expr, int> locals = new Dictionary<Expr, int>();
         private Environment environment;
         private bool _break = false;
         private bool _loop = false;
@@ -43,6 +44,11 @@ namespace Lox
             statement.accept<object>(this);
         }
 
+        public void resolve(Expr expr, int depth)
+        {
+            locals.Add(expr, depth);
+        }
+
         public void executeBlock(List<Statement> statements, Environment environment)
         {
             Environment previous = this.environment;
@@ -52,13 +58,12 @@ namespace Lox
 
                 foreach (Statement statement in statements)
                 {
-                    if(!_break)
-                    {
-                        execute(statement);
-                    }
-                    else
+                    if(_break && _loop)
                     {
                         break;
+                    }else
+                    {
+                        execute(statement);
                     }
                 }
             }
@@ -97,19 +102,19 @@ namespace Lox
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     return (double)left - (double)right;
                 case TokenType.PLUS:
-                    if(left.GetType() == typeof(double) && right.GetType() == typeof(double))
+                    if(left is double && right is double)
                     {
                         return (double)left + (double)right;
                     }
-                    if (left.GetType() == typeof(string) && right.GetType() == typeof(string))
+                    if (left is string && right is string)
                     {
                         return (string)left + (string)right;
                     }
-                    if (left.GetType() == typeof(double) && right.GetType() == typeof(string))
+                    if (left is double && right is string)
                     {
                         return ((double)left).ToString() + (string)right;
                     }
-                    if (left.GetType() == typeof(string) && right.GetType() == typeof(double))
+                    if (left is string && right is double)
                     {
                         return (string)left + ((double)right).ToString();
                     }
@@ -166,13 +171,13 @@ namespace Lox
         }
         private void checkNumberOperand(Token _operator, object operand)
         {
-            if (operand.GetType() == typeof(double))
+            if (operand is double)
                 return;
             throw new Exceptions.RuntimeError(_operator, "Operand must be a number.");
         }
         private void checkNumberOperand(Token _operator, object operand, object operandTwo)
         {
-            if (operand.GetType() == typeof(double) && operandTwo.GetType() == typeof(double))
+            if (operand is double && operandTwo is double)
                 return;
             throw new Exceptions.RuntimeError(_operator, "Operand must be a number.");
         }
@@ -181,7 +186,7 @@ namespace Lox
         {
             if (objectA == null) 
                 return false;
-            if (objectA.GetType() == typeof(bool)) 
+            if (objectA is bool) 
                 return (bool) objectA;
             return true;
         }
@@ -222,10 +227,23 @@ namespace Lox
         }
         public object visitVariable(Expr.Variable variable)
         {
-            return environment.get(variable.name);
+            return lookUpVariable(variable.name, variable);
         }
 
-        public object visitVarStatement(Statement.Var varStmt)
+        private Object lookUpVariable(Token name, Expr expr)
+        {
+            int distance = -1;
+            locals.TryGetValue(expr, out distance);
+            if(distance != -1)
+            {
+                return environment.getAt(distance, name.lexeme);
+            } else
+            {
+                return globals.get(name);
+            }
+        }
+
+            public object visitVarStatement(Statement.Var varStmt)
         {
             Object value = null;
             if(varStmt.initializer != null)
@@ -239,7 +257,16 @@ namespace Lox
         public object visitAssignExpr(Expr.AssignExpr assignExpr)
         {
             object value = evaluate(assignExpr.value);
-            environment.assign(assignExpr.name, value);
+
+            int distance = -1;
+            locals.TryGetValue(assignExpr, out distance);
+            if(distance != -1)
+            {
+                environment.assignAt(distance, assignExpr.name, value);
+            }else
+            {
+                globals.assign(assignExpr.name, value);
+            }
             return null;
         }
 

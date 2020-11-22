@@ -122,6 +122,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lox\Resolver.cs" />
     <Compile Include="Lox\Environment.cs" />
     <Compile Include="Lox\Exceptions\Return.cs" />
     <Compile Include="Lox\LoxCallable.cs" />
