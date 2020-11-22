@@ -13,6 +13,7 @@ namespace Lox
         private readonly Stack<Dictionary<string, bool>> scopes = new Stack<Dictionary<string, bool>>();
         private FunctionType currentFunction = FunctionType.NONE;
         private bool isInLoop = false;
+        private bool returned = false;
 
         public Resolver(Interpreter i)
         {
@@ -25,6 +26,13 @@ namespace Lox
         {
             foreach(Statement stmt in statements)
             {
+                if (returned)
+                {
+                    returned = false;
+                    Token name = new HelperFunctions.GetToken().evaluate(stmt);
+                    Lox.warn(name, "Unreachable code placed after return statement.");
+                    //break;
+                }
                 resolve(stmt);
             }
         }
@@ -191,6 +199,7 @@ namespace Lox
             {
                 resolve(returnStmt.value);
             }
+            returned = true;
             return null;
         }
 

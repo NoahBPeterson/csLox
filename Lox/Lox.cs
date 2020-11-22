@@ -106,6 +106,18 @@ namespace Lox
             }
         }
 
+        public static void warn(Token token, String message)
+        {
+            if (token.type == Token.TokenType.EOF)
+            {
+                Console.Error.WriteLine("[line " + token.line + "] Warning at end: "+message);
+            }
+            else
+            {
+                Console.Error.WriteLine("[line " + token.line + "] Warning at  '" + token.lexeme + "'", message);
+            }
+        }
+
         public static void runtimeError(Exceptions.RuntimeError error)
         {
             Console.WriteLine(error.Message + "\n[line " + error.token.line + "]");
