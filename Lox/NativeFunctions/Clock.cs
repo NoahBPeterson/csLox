@@ -15,7 +15,7 @@ namespace Lox.NativeFunctions
 
         public object call(Interpreter interpreter, List<object> arguments)
         {
-            return (double)DateTime.Now.Millisecond / 1000.0;
+            return (double)DateTimeOffset.Now.ToUnixTimeMilliseconds() /1000.0;
         }
 
         public override String ToString()
