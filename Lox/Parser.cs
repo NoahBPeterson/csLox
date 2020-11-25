@@ -416,7 +416,6 @@ namespace Lox
                     break;
                 }
             }
-            //if (match(TokenType.SEMICOLON)) consume(TokenType.SEMICOLON, "");
             return expr;
         }
 

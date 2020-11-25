@@ -24,7 +24,6 @@ namespace Lox
         Environment ancestor(int distance)
         {
             Environment environment = this;
-            //while (environment != null && environment.contains("ke);
             for (int i = 0; i < distance; i++)
             {
                 environment = environment.enclosing;
