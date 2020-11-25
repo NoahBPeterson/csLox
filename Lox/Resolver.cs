@@ -10,7 +10,7 @@ namespace Lox
     public class Resolver : Visitor<Object>, Statement.Visitor<Object>
     {
         private readonly Interpreter interpreter;
-        private readonly Stack<Dictionary<string, bool>> scopes = new Stack<Dictionary<string, bool>>();
+        private readonly Stack<Dictionary<string, Variable>> scopes = new Stack<Dictionary<string, Variable>>();
         private FunctionType currentFunction = FunctionType.NONE;
         private bool isInLoop = false;
         private bool returned = false;
@@ -54,11 +54,25 @@ namespace Lox
 
         private void beginScope()
         {
-            scopes.Push(new Dictionary<string, bool>());
+            scopes.Push(new Dictionary<string, Variable>());
         }
 
         private void endScope()
         {
+            foreach(string variable in scopes.Peek().Keys)
+            {
+                if(!scopes.Peek()[variable].used) //If the variable has not been initialized within the scope, issue a warning.
+                {
+                    Lox.warn(scopes.Peek()[variable].name, "Variable has not been used.");
+                }
+            }
+            foreach(string variable in scopes.Peek().Keys)
+            {
+                if(!scopes.Peek()[variable].initialized)
+                {
+                    Lox.warn(scopes.Peek()[variable].name, "Variable has not been initialized.");
+                }
+            }
             scopes.Pop();
         }
 
@@ -66,18 +80,19 @@ namespace Lox
         {
             if(scopes.Count == 0) return;
 
-            Dictionary<string, bool> scope = scopes.Peek();
+            Dictionary<string, Variable> scope = scopes.Peek();
             if(scope.ContainsKey(name.lexeme))
             {
-                Lox.error(name, "Already variable with this name in this scope.");
+                Lox.error(name, "A variable with this name already exists in this scope.");
             }
-            scope[name.lexeme] = false;
+            scope[name.lexeme] = new Variable(name);
+            scope[name.lexeme].initialized = false;
         }
 
         private void define(Token name)
         {
             if (scopes.Count == 0) return;
-            scopes.Peek()[name.lexeme] = true;
+            scopes.Peek()[name.lexeme].initialized = true;
         }
 
         private void resolveLocal(Expr expr, Token name)
@@ -87,6 +102,7 @@ namespace Lox
                 if(scopes.ElementAt(i).ContainsKey(name.lexeme))
                 {
                     interpreter.resolve(expr, scopes.Count - 1 - i);
+                    scopes.ElementAt(i)[name.lexeme].used = true;
                     return;
                 }
             }
@@ -221,9 +237,9 @@ namespace Lox
         {
             if (scopes.Count != 0)
             {
-                bool value = true;
+                Variable value = null;
                 scopes.Peek().TryGetValue(variable.name.lexeme, out value);
-                if (value == false && scopes.Peek().ContainsKey(variable.name.lexeme))
+                if (scopes.Peek().ContainsKey(variable.name.lexeme) && value.initialized == false)
                     Lox.error(variable.name, "Can't read local variable in its own initializer.");
             }
             resolveLocal(variable, variable.name);
@@ -249,6 +265,17 @@ namespace Lox
             resolve(whileStmt.body);
             isInLoop = enclosing;
             return null;
+        }
+
+        public class Variable
+        {
+            public Token name;
+            public bool used;
+            public bool initialized;
+            public Variable(Token name)
+            {
+                this.name = name;
+            }
         }
     }
 }
