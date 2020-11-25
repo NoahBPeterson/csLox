@@ -114,7 +114,7 @@ namespace Lox
             }
             else
             {
-                Console.Error.WriteLine("[line " + token.line + "] Warning at  '" + token.lexeme + "'", message);
+                Console.Error.WriteLine("[line " + token.line + "] Warning at '" + token.lexeme + "' "+ message);
             }
         }
 
