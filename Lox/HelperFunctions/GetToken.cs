@@ -121,5 +121,15 @@ namespace Lox.HelperFunctions
         {
             return classStatement.name;
         }
+
+        public Token visitSetExpr(Expr.Set set)
+        {
+            return set.name;
+        }
+
+        public Token visitGetExpr(Expr.Get get)
+        {
+            return get.name;
+        }
     }
 }

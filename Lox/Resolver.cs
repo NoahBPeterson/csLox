@@ -20,7 +20,7 @@ namespace Lox
             interpreter = i;
         }
 
-        private enum FunctionType { NONE, FUNCTION }
+        private enum FunctionType { NONE, FUNCTION, METHOD }
 
         public void resolve(List<Statement> statements)
         {
@@ -271,6 +271,24 @@ namespace Lox
         {
             declare(classStatement.name);
             define(classStatement.name);
+            foreach(Statement.function method in classStatement.methods)
+            {
+                FunctionType declaration = FunctionType.METHOD;
+                resolveFunction(method, declaration);
+            }
+            return null;
+        }
+
+        public object visitGetExpr(Expr.Get get)
+        {
+            resolve(get._object);
+            return null;
+        }
+
+        public object visitSetExpr(Expr.Set set)
+        {
+            resolve(set.value);
+            resolve(set._object);
             return null;
         }
 

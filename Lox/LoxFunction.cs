@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lox
 {
-    class LoxFunction : LoxCallable
+    public class LoxFunction : LoxCallable
     {
         private readonly Statement.function declaration;
         private readonly Environment closure;

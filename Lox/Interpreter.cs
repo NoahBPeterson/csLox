@@ -375,9 +375,41 @@ namespace Lox
         public object visitClassStatement(Statement.Class classStatement)
         {
             environment.define(classStatement.name.lexeme, null);
-            LoxClass _class = new LoxClass(classStatement.name.lexeme);
+
+            Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
+            foreach(Statement.function method in classStatement.methods)
+            {
+                LoxFunction function = new LoxFunction(method, environment);
+                methods.Add(method.name.lexeme, function);
+            }
+            LoxClass _class = new LoxClass(classStatement.name.lexeme, methods);
             environment.assign(classStatement.name, _class);
             return null;
+        }
+
+        public object visitGetExpr(Expr.Get get)
+        {
+            Object _object = evaluate(get._object);
+            if(_object is LoxInstance)
+            {
+                return ((LoxInstance)_object).get(get.name);
+            }
+
+            throw new Exceptions.RuntimeError(get.name, "Only instances have properties.");
+        }
+
+        public object visitSetExpr(Expr.Set set)
+        {
+            Object _object = evaluate(set._object);
+
+            if(!(_object is LoxInstance))
+            {
+                throw new Exceptions.RuntimeError(set.name, "Only instances have fields.");
+            }
+
+            Object value = evaluate(set.value);
+            ((LoxInstance)_object).set(set.name, value);
+            return value;
         }
     }
 }

@@ -92,23 +92,6 @@ namespace Lox
             }
         }
 
-        /*public class Lambda : Expr
-        {
-            public readonly List<Token> _params;
-            public readonly List<Statement> body;
-
-            public Lambda(List<Token> p, List<Statement> b)
-            {
-                _params = p;
-                body = b;
-            }
-
-            public override T accept<T>(Visitor<T> visitor)
-            {
-                return visitor.visitLambdaExpr(this);
-            }
-        }*/
-
         public class Grouping : Expr
         {
             public readonly Expr expression; // "(" expr ")"
@@ -190,10 +173,47 @@ namespace Lox
             }
         }
 
+        public class Get : Expr
+        {
+            public readonly Token name;
+            public readonly Expr _object;
+
+            public Get(Expr e, Token n)
+            {
+                name = n;
+                _object = e;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitGetExpr(this);
+            }
+        }
+
+        public class Set : Expr
+        {
+            public readonly Expr _object;
+            public readonly Token name;
+            public readonly Expr value;
+
+            public Set(Expr o, Token n, Expr v)
+            {
+                _object = o;
+                name = n;
+                value = v;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitSetExpr(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
-        //T visitLambdaExpr(Expr.Lambda lambda);
+        T visitSetExpr(Expr.Set set);
+        T visitGetExpr(Expr.Get get);
         T visitCallExpr(Expr.Call call);
         T visitLogicalExpr(Expr.logicalExpr logicalExpr);
         T visitAssignExpr(Expr.AssignExpr assignExpr);

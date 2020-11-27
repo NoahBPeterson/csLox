@@ -83,5 +83,15 @@ namespace Lox
             }
             return parenthesize("()", null);
         }
+
+        public string visitSetExpr(Expr.Set set)
+        {
+            return parenthesize(set.name.lexeme, new Expr[] { set.value, set._object });
+        }
+
+        public string visitGetExpr(Expr.Get get)
+        {
+            return parenthesize(get.name.lexeme, new Expr[] { get._object });
+        }
     }
 }
