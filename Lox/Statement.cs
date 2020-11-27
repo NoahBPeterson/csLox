@@ -70,7 +70,7 @@ namespace Lox
             public readonly Token name;
             public readonly List<Token> _params;
             public readonly List<Statement> body;
-            
+
             public function(Token n, List<Token> p, List<Statement> b)
             {
                 name = n;
@@ -121,20 +121,20 @@ namespace Lox
             }
         }
 
-            public class breakStmt : Statement
+        public class breakStmt : Statement
+        {
+            public readonly Token name;
+            public breakStmt(Token n)
             {
-                public readonly Token name;
-                public breakStmt(Token n)
-                {
-                    name = n;
-                }
-
-                public override T accept<T>(Visitor<T> visitor)
-                {
-                    return visitor.visitBreakStatement(this);
-                }
-
+                name = n;
             }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitBreakStatement(this);
+            }
+
+        }
         public class Return : Statement
         {
             public readonly Token keyword;
@@ -151,8 +151,25 @@ namespace Lox
                 return visitor.visitReturnStatement(this);
             }
         }
+
+        public class Class : Statement
+        {
+            public readonly Token name;
+            public readonly List<Statement.function> methods;
+
+            public Class(Token n, List<Statement.function> m)
+            {
+                name = n;
+                methods = m;
+            }
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitClassStatement(this);
+            }
+        }
         public interface Visitor<T>
         {
+            T visitClassStatement(Statement.Class classStatement);
             T visitReturnStatement(Statement.Return returnStmt);
             T visitFunction(Statement.function func);
             T visitBreakStatement(Statement.breakStmt breakStmt);

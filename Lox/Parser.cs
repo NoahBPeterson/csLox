@@ -45,6 +45,8 @@ namespace Lox
         {
             try
             {
+                if (match(TokenType.CLASS))
+                    return classDeclaration();
                 if (match(TokenType.FUNC))
                     return function("function");
                 if (match(TokenType.VAR))
@@ -56,6 +58,21 @@ namespace Lox
                 synchronize();
                 return null;
             }
+        }
+
+        private Statement classDeclaration()
+        {
+            Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+            consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
+
+            List<Statement.function> methods = new List<Statement.function>();
+            while(!check(TokenType.RIGHT_BRACE) && !isAtEnd())
+            {
+                methods.Add(function("method"));
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+            return new Statement.Class(name, methods);
         }
 
         private Statement statement()

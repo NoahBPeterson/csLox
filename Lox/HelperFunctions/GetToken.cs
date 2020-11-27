@@ -116,5 +116,10 @@ namespace Lox.HelperFunctions
         {
             return new Token(Token.TokenType.WHILE, "while", null, evaluate(whileStmt.condition).line);
         }
+
+        public Token visitClassStatement(Statement.Class classStatement)
+        {
+            return classStatement.name;
+        }
     }
 }

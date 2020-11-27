@@ -371,5 +371,13 @@ namespace Lox
 
             throw new Exceptions.Return(value);
         }
+
+        public object visitClassStatement(Statement.Class classStatement)
+        {
+            environment.define(classStatement.name.lexeme, null);
+            LoxClass _class = new LoxClass(classStatement.name.lexeme);
+            environment.assign(classStatement.name, _class);
+            return null;
+        }
     }
 }

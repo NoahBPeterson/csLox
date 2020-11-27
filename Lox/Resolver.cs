@@ -267,6 +267,13 @@ namespace Lox
             return null;
         }
 
+        public object visitClassStatement(Statement.Class classStatement)
+        {
+            declare(classStatement.name);
+            define(classStatement.name);
+            return null;
+        }
+
         public class Variable
         {
             public Token name;

@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lox\HelperFunctions\GetToken.cs" />
+    <Compile Include="Lox\LoxClass.cs" />
     <Compile Include="Lox\Resolver.cs" />
     <Compile Include="Lox\Environment.cs" />
     <Compile Include="Lox\Exceptions\Return.cs" />
