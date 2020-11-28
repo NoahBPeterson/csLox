@@ -27,7 +27,7 @@ namespace Lox
                 return fields[name.lexeme];
             }
             LoxFunction method = _class.findMethod(name.lexeme);
-            if (method != null) return method;
+            if (method != null) return method.bind(this);
 
             throw new Exceptions.RuntimeError(name, "Undefined property ''" + name.lexeme + "'.");
         }

@@ -12,6 +12,7 @@ namespace Lox
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, Variable>> scopes = new Stack<Dictionary<string, Variable>>();
         private FunctionType currentFunction = FunctionType.NONE;
+        private ClassType currentClass = ClassType.NONE;
         private bool isInLoop = false;
         private bool returned = false;
 
@@ -20,7 +21,8 @@ namespace Lox
             interpreter = i;
         }
 
-        private enum FunctionType { NONE, FUNCTION, METHOD }
+        private enum FunctionType { NONE, FUNCTION, INITIALIZER, METHOD }
+        private enum ClassType { NONE, CLASS }
 
         public void resolve(List<Statement> statements)
         {
@@ -31,7 +33,6 @@ namespace Lox
                     returned = false;
                     Token name = new HelperFunctions.GetToken().evaluate(stmt);
                     Lox.warn(name, "Unreachable code placed after return statement.");
-                    //break;
                 }
                 resolve(stmt);
             }
@@ -213,6 +214,10 @@ namespace Lox
             }
             if(returnStmt.value != null)
             {
+                if(currentFunction == FunctionType.INITIALIZER)
+                {
+                    Lox.error(returnStmt.keyword, "Can't return a value from an initializer.");
+                }
                 resolve(returnStmt.value);
             }
             returned = true;
@@ -269,13 +274,28 @@ namespace Lox
 
         public object visitClassStatement(Statement.Class classStatement)
         {
+            ClassType enclosingClass = currentClass;
+            currentClass = ClassType.CLASS;
             declare(classStatement.name);
             define(classStatement.name);
+
+            beginScope();
+            Token thisVar = new Token(TokenType.THIS_OBJECT, "this", null, -1);
+            Variable varHacky = new Variable(thisVar);
+            varHacky.initialized = true;
+            scopes.Peek().Add("this", varHacky);
+
             foreach(Statement.function method in classStatement.methods)
             {
                 FunctionType declaration = FunctionType.METHOD;
+                if(method.name.lexeme.Equals("init"))
+                {
+                    declaration = FunctionType.INITIALIZER;
+                }
                 resolveFunction(method, declaration);
             }
+            endScope();
+            currentClass = enclosingClass;
             return null;
         }
 
@@ -289,6 +309,17 @@ namespace Lox
         {
             resolve(set.value);
             resolve(set._object);
+            return null;
+        }
+
+        public object visitThisExpr(Expr.This _this)
+        {
+            if(currentClass == ClassType.NONE)
+            {
+                Lox.error(_this.keyword, "Can't use 'this' outside of a class.");
+                return null;
+            }
+            resolveLocal(_this, _this.keyword);
             return null;
         }
 

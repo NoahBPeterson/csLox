@@ -69,15 +69,7 @@ namespace Lox
         {
             public readonly Expr callee;
             public readonly Token paren;
-            //public readonly List<Expr> arguments;
             public readonly List<Object> expressionArguments;
-
-            /*public Call(Expr c, Token p, List<Expr> a)
-            {
-                callee = c;
-                paren = p;
-                arguments = a;
-            }*/
 
             public Call(Expr c, Token p, List<Object> expressionArgs)
             {
@@ -209,9 +201,24 @@ namespace Lox
             }
         }
 
+        public class This : Expr
+        {
+            public readonly Token keyword;
+            public This(Token k)
+            {
+                keyword = k;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitThisExpr(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
+        T visitThisExpr(Expr.This _this);
         T visitSetExpr(Expr.Set set);
         T visitGetExpr(Expr.Get get);
         T visitCallExpr(Expr.Call call);

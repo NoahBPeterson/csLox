@@ -354,7 +354,7 @@ namespace Lox
 
         public object visitFunction(Statement.function func)
         {
-            LoxFunction function = new LoxFunction(func, environment);
+            LoxFunction function = new LoxFunction(func, environment, false);
             if (func.name != null) //If the function is named
             {
                 environment.define(func.name.lexeme, function);
@@ -379,7 +379,7 @@ namespace Lox
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
             foreach(Statement.function method in classStatement.methods)
             {
-                LoxFunction function = new LoxFunction(method, environment);
+                LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.Equals("init"));
                 methods.Add(method.name.lexeme, function);
             }
             LoxClass _class = new LoxClass(classStatement.name.lexeme, methods);
@@ -410,6 +410,11 @@ namespace Lox
             Object value = evaluate(set.value);
             ((LoxInstance)_object).set(set.name, value);
             return value;
+        }
+
+        public object visitThisExpr(Expr.This _this)
+        {
+            return lookUpVariable(_this.keyword, _this);
         }
     }
 }

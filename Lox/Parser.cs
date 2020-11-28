@@ -463,6 +463,8 @@ namespace Lox
                 return new Expr.Grouping(expr);
             }
 
+            if (match(TokenType.THIS_OBJECT)) return new Expr.This(previous());
+
             if(match(TokenType.IDENTIFIER))
             {
                 return new Expr.Variable(previous());

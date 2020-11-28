@@ -20,7 +20,7 @@ namespace Lox.HelperFunctions
 
         private Token defaultToken()
         {
-            return new Token(Token.TokenType.EOF, "", null, 1);
+            return new Token(Token.TokenType.EOF, "", null, 0);
         }
 
         public Token visitAssignExpr(Expr.AssignExpr assignExpr)
@@ -130,6 +130,11 @@ namespace Lox.HelperFunctions
         public Token visitGetExpr(Expr.Get get)
         {
             return get.name;
+        }
+
+        public Token visitThisExpr(Expr.This _this)
+        {
+            return _this.keyword;
         }
     }
 }

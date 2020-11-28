@@ -10,11 +10,19 @@ namespace Lox
     {
         private readonly Statement.function declaration;
         private readonly Environment closure;
+        private bool isInitializer;
 
-        public LoxFunction(Statement.function decl, Environment enclosure)
+        public LoxFunction(Statement.function decl, Environment enclosure, bool isIn)
         {
             declaration = decl;
             closure = enclosure;
+            isInitializer = isIn;
+        }
+        public LoxFunction bind(LoxInstance instance)
+        {
+            Environment environment = new Environment(closure);
+            environment.define("this", instance);
+            return new LoxFunction(declaration, environment, isInitializer);
         }
         public int arity()
         {
@@ -29,7 +37,7 @@ namespace Lox
                 Object arg = arguments[i];
                 if(arguments[i] is Statement.function)
                 {
-                    arg = new LoxFunction((Statement.function) arguments[i], environment);
+                    arg = new LoxFunction((Statement.function) arguments[i], environment, false);
                 }
                 environment.define(declaration._params[i].lexeme, arg);
             }
@@ -38,8 +46,10 @@ namespace Lox
                 interpreter.executeBlock(declaration.body, environment);
             } catch (Exceptions.Return returnValue)
             {
+                if (isInitializer) return closure.getAt(0, "this");
                 return returnValue.value;
             }
+            if (isInitializer) return closure.getAt(0, "this");
             return null;
         }
 
