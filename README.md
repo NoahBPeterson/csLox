@@ -19,8 +19,8 @@ Todo: ☐ ☑ ☒
 
 ☑ Functions
 
-☒ Resolving and Binding
+☑ Resolving and Binding
 
-☐ Classes
+☒ Classes
 
 ☐ Inheritance
