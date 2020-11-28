@@ -553,8 +553,8 @@ namespace Lox
                     case TokenType.RETURN:
                         return;
                 }
+                advance();
             }
-            advance();
         }
     }
 }
