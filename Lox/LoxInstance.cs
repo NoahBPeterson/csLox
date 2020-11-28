@@ -15,6 +15,13 @@ namespace Lox
             this._class = _class;
         }
 
+        public LoxInstance() { }
+
+        public void setClass(LoxClass _c)
+        {
+            _class = _c;
+        }
+
         public override string ToString()
         {
             return _class.name + " instance";

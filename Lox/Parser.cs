@@ -66,13 +66,21 @@ namespace Lox
             consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
             List<Statement.function> methods = new List<Statement.function>();
+            List<Statement.function> staticFunctions = new List<Statement.function>();
             while(!check(TokenType.RIGHT_BRACE) && !isAtEnd())
             {
-                methods.Add(function("method"));
+                if(match(TokenType.CLASS))
+                {
+                    staticFunctions.Add(function("static"));
+                }
+                else
+                {
+                    methods.Add(function("method"));
+                }
             }
 
             consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
-            return new Statement.Class(name, methods);
+            return new Statement.Class(name, methods, staticFunctions);
         }
 
         private Statement statement()

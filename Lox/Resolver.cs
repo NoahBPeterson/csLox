@@ -63,7 +63,7 @@ namespace Lox
         {
             foreach(string variable in scopes.Peek().Keys)
             {
-                if(!scopes.Peek()[variable].used) //If the variable has not been initialized within the scope, issue a warning.
+                if(!scopes.Peek()[variable].used && !variable.Equals("this")) //If the variable has not been initialized within the scope, issue a warning.
                 {
                     Lox.warn(scopes.Peek()[variable].name, "Variable has not been used.");
                 }

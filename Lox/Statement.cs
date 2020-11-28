@@ -156,11 +156,13 @@ namespace Lox
         {
             public readonly Token name;
             public readonly List<Statement.function> methods;
+            public readonly List<Statement.function> staticFunctions;
 
-            public Class(Token n, List<Statement.function> m)
+            public Class(Token n, List<Statement.function> m, List<Statement.function> sF)
             {
                 name = n;
                 methods = m;
+                staticFunctions = sF;
             }
             public override T accept<T>(Visitor<T> visitor)
             {

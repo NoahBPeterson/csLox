@@ -337,11 +337,15 @@ namespace Lox
                 }
             }
 
-            if(!(callee is LoxCallable))
+            if (!(callee is LoxCallable) && !(callee is Statement.function))
             {
                 throw new Exceptions.RuntimeError(call.paren, "Can only call functions and classes.");
+            }else if(callee is Statement.function)
+            {
+                Statement.function staticFunction = (Statement.function) callee;
+                LoxFunction classStaticFunction = new LoxFunction(staticFunction, globals, false);
+                return classStaticFunction.call(this, arguments);
             }
-
             LoxCallable function = (LoxCallable)callee;
             if(arguments.Count != function.arity())
             {
@@ -383,6 +387,10 @@ namespace Lox
                 methods.Add(method.name.lexeme, function);
             }
             LoxClass _class = new LoxClass(classStatement.name.lexeme, methods);
+            foreach(Statement.function staticFunction in classStatement.staticFunctions)
+            {
+                _class.set(staticFunction.name, staticFunction);
+            }
             environment.assign(classStatement.name, _class);
             return null;
         }

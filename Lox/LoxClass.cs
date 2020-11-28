@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Lox
 {
-    public class LoxClass : LoxCallable
+    public class LoxClass : LoxInstance, LoxCallable
     {
         public readonly string name;
         private readonly Dictionary<string, LoxFunction> methods;
         public LoxClass(string n, Dictionary<string, LoxFunction> m)
         {
+            base.setClass(this);
             name = n;
             this.methods = m;
         }
