@@ -36,6 +36,7 @@ namespace Lox
                 }
                 resolve(stmt);
             }
+            if(returned) returned = false;
         }
 
         private void resolveFunction(Statement.function function, FunctionType type)
