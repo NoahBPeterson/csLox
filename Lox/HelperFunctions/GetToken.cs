@@ -74,7 +74,7 @@ namespace Lox.HelperFunctions
 
         public Token visitLiteralExpr(Expr.Literal literal)
         {
-            return defaultToken();
+            return literal.type;
         }
 
         public Token visitLogicalExpr(Expr.logicalExpr logicalExpr)

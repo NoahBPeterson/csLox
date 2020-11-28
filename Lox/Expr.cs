@@ -102,10 +102,12 @@ namespace Lox
         public class Literal : Expr
         {
             public readonly Object literal;
+            public readonly Token type;
             
-            public Literal(Object value)
+            public Literal(Object value, Token t)
             {
                 this.literal = value;
+                type = t;
             }
 
             public override T accept<T>(Visitor<T> visitor)

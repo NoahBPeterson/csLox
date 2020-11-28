@@ -78,7 +78,7 @@ namespace Lox
                     expressions[i] = (Expr) call.expressionArguments[i];
                 } else if(call.expressionArguments[i] is Statement.function)
                 {
-                    expressions[i] = new Expr.Literal("<lambda>");
+                    expressions[i] = new Expr.Literal("<lambda>", null);
                 }
             }
             return parenthesize("()", null);

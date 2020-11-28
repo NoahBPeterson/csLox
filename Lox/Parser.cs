@@ -134,7 +134,7 @@ namespace Lox
                 body = new Statement.Block(new List<Statement> { body, new Statement.Expression(increment) });
             }
 
-            if (condition == null) condition = new Expr.Literal(true);
+            if (condition == null) condition = new Expr.Literal(true, previous());
             body = new Statement.whileStmt(condition, body);
 
             if(initializer != null)
@@ -446,14 +446,14 @@ namespace Lox
 
         private Expr primary()
         {
-            if (match(TokenType.FALSE)) return new Expr.Literal(false);
-            if (match(TokenType.TRUE)) return new Expr.Literal(true);
-            if (match(TokenType.NIL)) return new Expr.Literal(null);
+            if (match(TokenType.FALSE)) return new Expr.Literal(false, previous());
+            if (match(TokenType.TRUE)) return new Expr.Literal(true, previous());
+            if (match(TokenType.NIL)) return new Expr.Literal(null, previous());
             
 
             if(match(TokenType.NUMBER, TokenType.STRING))
             {
-                return new Expr.Literal(previous().literal);
+                return new Expr.Literal(previous().literal, previous());
             }
 
             if(match(TokenType.LEFT_PAREN))
