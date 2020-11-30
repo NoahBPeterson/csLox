@@ -120,6 +120,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="README.md" />
+    <None Include="Todo.md" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lox\HelperFunctions\GetToken.cs" />

@@ -36,7 +36,7 @@ namespace Lox
             LoxFunction method = _class.findMethod(name.lexeme);
             if (method != null) return method.bind(this);
 
-            throw new Exceptions.RuntimeError(name, "Undefined property ''" + name.lexeme + "'.");
+            throw new Exceptions.RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
         }
 
         public void set(Token name, Object value)

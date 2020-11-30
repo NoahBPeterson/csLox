@@ -221,7 +221,7 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr.GetType() == typeof(Expr.AssignExpr) || expr.GetType() == typeof(Expr.Call))
+            if (expr.GetType() == typeof(Expr.AssignExpr) || expr.GetType() == typeof(Expr.Call) || expr is Expr.Set)
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
@@ -236,6 +236,13 @@ namespace Lox
             if (!kind.Equals("lambda"))
             {
                 name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+            }
+            if(kind.Equals("method") && match(TokenType.LEFT_BRACE))
+            {
+                List<Statement> bodyStmts = block();
+                List<Token> sentinelParam = new List<Token>();
+                sentinelParam.Add(new Token(TokenType.SEMICOLON, "getter", null, name.line)); //Make an impossible Token
+                return new Statement.function(name, sentinelParam, bodyStmts);
             }
             consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
             List<Token> parameters = new List<Token>();

@@ -34,7 +34,7 @@ namespace Lox
         Environment ancestor(string key)
         {
             Environment environment = this;
-            while(environment != null && !environment.contains(key))
+            while(environment != null && !environment.contains(key) && environment.enclosing != null)
             {
                 environment = environment.enclosing;
             }

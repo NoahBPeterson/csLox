@@ -293,7 +293,21 @@ namespace Lox
                 {
                     declaration = FunctionType.INITIALIZER;
                 }
-                resolveFunction(method, declaration);
+                if(method._params.Count == 1 && method._params.ElementAt(0).type == TokenType.SEMICOLON && method._params.ElementAt(0).lexeme.Equals("getter"))
+                {
+                    FunctionType previous = currentFunction;
+                    currentFunction = FunctionType.METHOD;
+                    Variable getter = new Variable(method.name);
+                    getter.initialized = (method.body.Count != 0);
+                    getter.used = true; //We don't want warnings for member functions/getters.
+                    resolve(method.body);
+                    scopes.Peek().Add(method.name.lexeme, getter);
+                    currentFunction = previous;
+                }
+                else
+                {
+                    resolveFunction(method, declaration);
+                }
             }
             endScope();
             currentClass = enclosingClass;

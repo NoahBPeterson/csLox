@@ -381,15 +381,30 @@ namespace Lox
             environment.define(classStatement.name.lexeme, null);
 
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
-            foreach(Statement.function method in classStatement.methods)
+            Dictionary<LoxFunction, Token> getters = new Dictionary<LoxFunction, Token>();
+            foreach (Statement.function method in classStatement.methods)
             {
-                LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.Equals("init"));
-                methods.Add(method.name.lexeme, function);
+                if (method._params.Count == 1 && method._params.ElementAt(0).type == TokenType.SEMICOLON && method._params.ElementAt(0).lexeme.Equals("getter"))
+                {
+                    Statement.function noParams = new Statement.function(method.name, new List<Token>(), method.body);
+                    LoxFunction getter = new LoxFunction(noParams, environment, false);
+                    methods.Add(method.name.lexeme, getter);
+                    getters[getter]  = method.name;
+                }
+                else
+                {
+                    LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.Equals("init"));
+                    methods.Add(method.name.lexeme, function);
+                }
             }
             LoxClass _class = new LoxClass(classStatement.name.lexeme, methods);
             foreach(Statement.function staticFunction in classStatement.staticFunctions)
             {
                 _class.set(staticFunction.name, staticFunction);
+            }
+            foreach(LoxFunction getter in getters.Keys)
+            {
+                _class.set(getters[getter], getter);
             }
             environment.assign(classStatement.name, _class);
             return null;
@@ -400,6 +415,12 @@ namespace Lox
             Object _object = evaluate(get._object);
             if(_object is LoxInstance)
             {
+                object result = ((LoxInstance)_object).get(get.name);
+                if (result is LoxFunction)
+                {
+                    return ((LoxFunction)result).call(this, null);
+                }
+
                 return ((LoxInstance)_object).get(get.name);
             }
 

@@ -21,6 +21,6 @@ Todo: ☐ ☑ ☒
 
 ☑ Resolving and Binding
 
-☒ Classes
+☑ Classes
 
 ☐ Inheritance
