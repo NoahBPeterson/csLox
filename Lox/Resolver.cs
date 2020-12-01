@@ -280,6 +280,21 @@ namespace Lox
             declare(classStatement.name);
             define(classStatement.name);
 
+
+            if (classStatement.superclass != null)
+            {
+                if (classStatement.name.lexeme.Equals(classStatement.superclass.name.lexeme))
+                {
+                    Lox.error(classStatement.superclass.name, "A class can't inherit from itself.");
+                }
+                resolve(classStatement.superclass);
+                beginScope();
+                Variable sup = new Variable(classStatement.name);
+                sup.initialized = true;
+                sup.used = true;
+                scopes.Peek().Add("super", sup);
+            }
+
             beginScope();
             Token thisVar = new Token(TokenType.THIS_OBJECT, "this", null, -1);
             Variable varHacky = new Variable(thisVar);
@@ -310,6 +325,9 @@ namespace Lox
                 }
             }
             endScope();
+
+            if (classStatement.superclass != null) endScope();
+
             currentClass = enclosingClass;
             return null;
         }
@@ -335,6 +353,12 @@ namespace Lox
                 return null;
             }
             resolveLocal(_this, _this.keyword);
+            return null;
+        }
+
+        public object visitSuperExpr(Expr.Super super)
+        {
+            resolveLocal(super, super.keyword);
             return null;
         }
 

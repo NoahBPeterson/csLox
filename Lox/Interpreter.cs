@@ -7,7 +7,7 @@ using static Lox.Token;
 
 namespace Lox
 {
-    public class Interpreter : Visitor<Object>, Statement.Visitor<Object>
+    public class Interpreter : Visitor<object>, Statement.Visitor<object>
     {
         public readonly Environment globals = new Environment();
         private readonly Dictionary<Expr, int> locals = new Dictionary<Expr, int>();
@@ -378,7 +378,22 @@ namespace Lox
 
         public object visitClassStatement(Statement.Class classStatement)
         {
+            Object superclass = null;
+            if(classStatement.superclass != null)
+            {
+                superclass = evaluate(classStatement.superclass);
+                if(!(superclass is LoxClass))
+                {
+                    throw new Exceptions.RuntimeError(classStatement.superclass.name, "Superclass must be a class.");
+                }
+            }
             environment.define(classStatement.name.lexeme, null);
+
+            if(classStatement.superclass != null)
+            {
+                environment = new Environment(environment);
+                environment.define("super", superclass);
+            }
 
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
             Dictionary<LoxFunction, Token> getters = new Dictionary<LoxFunction, Token>();
@@ -397,7 +412,7 @@ namespace Lox
                     methods.Add(method.name.lexeme, function);
                 }
             }
-            LoxClass _class = new LoxClass(classStatement.name.lexeme, methods);
+            LoxClass _class = new LoxClass(classStatement.name.lexeme, (LoxClass) superclass, methods);
             foreach(Statement.function staticFunction in classStatement.staticFunctions)
             {
                 _class.set(staticFunction.name, staticFunction);
@@ -405,6 +420,10 @@ namespace Lox
             foreach(LoxFunction getter in getters.Keys)
             {
                 _class.set(getters[getter], getter);
+            }
+            if(superclass != null)
+            {
+                environment = environment.enclosing;
             }
             environment.assign(classStatement.name, _class);
             return null;
@@ -418,7 +437,7 @@ namespace Lox
                 object result = ((LoxInstance)_object).get(get.name);
                 if (result is LoxFunction)
                 {
-                    return ((LoxFunction)result).call(this, null);
+                    //return ((LoxFunction)result).call(this, null);
                 }
 
                 return ((LoxInstance)_object).get(get.name);
@@ -444,6 +463,21 @@ namespace Lox
         public object visitThisExpr(Expr.This _this)
         {
             return lookUpVariable(_this.keyword, _this);
+        }
+
+        public object visitSuperExpr(Expr.Super super)
+        {
+            int distance = -1;
+            locals.TryGetValue(super, out distance);
+            //if (distance != -1)
+            LoxClass superClass = (LoxClass)environment.getAt(distance, "super");
+            LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this"); //May have to find a fix for this given my implementation of getAt().
+            LoxFunction method = superClass.findMethod(super.method.lexeme);
+            if (method == null)
+            {
+                throw new Exceptions.RuntimeError(super.method, "Undefined property '" + super.method.lexeme + "'.");
+            }
+            return method.bind(_object);
         }
     }
 }

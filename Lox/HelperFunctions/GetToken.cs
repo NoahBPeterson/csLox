@@ -136,5 +136,10 @@ namespace Lox.HelperFunctions
         {
             return _this.keyword;
         }
+
+        public Token visitSuperExpr(Expr.Super super)
+        {
+            return super.keyword;
+        }
     }
 }

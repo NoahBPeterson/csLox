@@ -203,6 +203,23 @@ namespace Lox
             }
         }
 
+        public class Super : Expr
+        {
+            public readonly Token keyword;
+            public readonly Token method;
+
+            public Super(Token k, Token m)
+            {
+                keyword = k;
+                method = m;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitSuperExpr(this);
+            }
+        }
+
         public class This : Expr
         {
             public readonly Token keyword;
@@ -220,6 +237,7 @@ namespace Lox
     }
     public interface Visitor<T>
     {
+        T visitSuperExpr(Expr.Super super);
         T visitThisExpr(Expr.This _this);
         T visitSetExpr(Expr.Set set);
         T visitGetExpr(Expr.Get get);

@@ -98,5 +98,10 @@ namespace Lox
         {
             return parenthesize(_this.keyword.lexeme, new Expr[] { });
         }
+
+        public string visitSuperExpr(Expr.Super super)
+        {
+            return parenthesize(super.keyword.lexeme, new Expr[] { });
+        }
     }
 }

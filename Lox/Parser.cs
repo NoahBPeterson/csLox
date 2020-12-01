@@ -63,6 +63,16 @@ namespace Lox
         private Statement classDeclaration()
         {
             Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+
+            Expr.Variable superclass = null;
+            if(match(TokenType.LESS_THAN))
+            {
+                consume(TokenType.IDENTIFIER, "Expect superclass name.");
+                superclass = new Expr.Variable(previous());
+            }
+
+
+
             consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
             List<Statement.function> methods = new List<Statement.function>();
@@ -80,7 +90,7 @@ namespace Lox
             }
 
             consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
-            return new Statement.Class(name, methods, staticFunctions);
+            return new Statement.Class(name, superclass, methods, staticFunctions);
         }
 
         private Statement statement()
@@ -476,6 +486,14 @@ namespace Lox
                 Expr expr = expression();
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Expr.Grouping(expr);
+            }
+
+            if(match(TokenType.SUPER_CLASS))
+            {
+                Token keyword = previous();
+                consume(TokenType.DOT, "Expect '.' after 'super'.");
+                Token method = consume(TokenType.IDENTIFIER, "Expect superclass method name.");
+                return new Expr.Super(keyword, method);
             }
 
             if (match(TokenType.THIS_OBJECT)) return new Expr.This(previous());
