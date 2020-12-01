@@ -22,7 +22,7 @@ namespace Lox
         }
 
         private enum FunctionType { NONE, FUNCTION, INITIALIZER, METHOD }
-        private enum ClassType { NONE, CLASS }
+        private enum ClassType { NONE, CLASS, SUBCLASS }
 
         public void resolve(List<Statement> statements)
         {
@@ -287,6 +287,7 @@ namespace Lox
                 {
                     Lox.error(classStatement.superclass.name, "A class can't inherit from itself.");
                 }
+                currentClass = ClassType.SUBCLASS;
                 resolve(classStatement.superclass);
                 beginScope();
                 Variable sup = new Variable(classStatement.name);
@@ -358,6 +359,14 @@ namespace Lox
 
         public object visitSuperExpr(Expr.Super super)
         {
+            if (currentClass == ClassType.NONE)
+            {
+                Lox.error(super.keyword, "Can't use 'super' outside of a class.");
+            }
+            else if (currentClass != ClassType.SUBCLASS)
+            {
+                Lox.error(super.keyword, "Can't use 'super' in a class with no superclass.");
+            }
             resolveLocal(super, super.keyword);
             return null;
         }
