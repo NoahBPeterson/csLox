@@ -99,6 +99,7 @@ namespace Lox
             if(match(TokenType.LEFT_BRACE)) return new Statement.Block(block());
             if(match(TokenType.IF)) return ifStatement();
             if(match(TokenType.RETURN)) return returnStatement();
+            if(match(TokenType.DO)) return doWhileStatement();
             if(match(TokenType.WHILE)) return whileStatement();
             if(match(TokenType.FOR)) return forStatement();
             if (match(TokenType.BREAK))
@@ -165,7 +166,7 @@ namespace Lox
             }
 
             if (condition == null) condition = new Expr.Literal(true, previous());
-            body = new Statement.whileStmt(condition, body);
+            body = new Statement.whileStmt(condition, body, false);
 
             if(initializer != null)
             {
@@ -229,6 +230,19 @@ namespace Lox
             return new Statement.Var(name, initializer);
         }
 
+        private Statement doWhileStatement()
+        {
+            parsingLoop = true;
+            Statement body = statement();
+            parsingLoop = false;
+            consume(TokenType.WHILE, "Expect 'while' at the end of the do-while loop body.");
+            consume(TokenType.LEFT_PAREN, "Expct '(' after 'while'.");
+            Expr condition = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+            consume(TokenType.SEMICOLON, "Expected ';' after while statement.");
+            return new Statement.whileStmt(condition, body, true);
+        }
+
         private Statement whileStatement()
         {
             consume(TokenType.LEFT_PAREN, "Expct '(' after 'while'.");
@@ -237,7 +251,7 @@ namespace Lox
             parsingLoop = true;
             Statement body = statement();
             parsingLoop = false;
-            return new Statement.whileStmt(condition, body);
+            return new Statement.whileStmt(condition, body, false);
         }
 
         private Statement expressionStatement()

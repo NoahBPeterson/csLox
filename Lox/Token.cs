@@ -48,7 +48,7 @@ namespace Lox
 
             //Keywords
             AND, OR, CLASS, IF, ELSE, FUNC, FOR, NIL, FALSE,
-            PRINT, RETURN, SUPER_CLASS, THIS_OBJECT, TRUE, VAR, WHILE, BREAK, CONTINUE,
+            PRINT, RETURN, SUPER_CLASS, THIS_OBJECT, TRUE, VAR, WHILE, BREAK, CONTINUE, DO,
 
             EOF
         }

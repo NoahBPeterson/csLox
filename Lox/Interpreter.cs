@@ -310,11 +310,23 @@ namespace Lox
 
         public object visitWhileStatement(Statement.whileStmt stmt)
         {
-            while(isTruthy(evaluate(stmt.condition)) && !_break)
+            if (stmt.doWhileLoop)
             {
-                _loop = true;
-                execute(stmt.body);
-                _continue = false;
+                do
+                {
+                    _loop = true;
+                    execute(stmt.body);
+                    _continue = false;
+                } while (isTruthy(evaluate(stmt.condition)) && !_break);
+            }
+            else
+            {
+                while (isTruthy(evaluate(stmt.condition)) && !_break)
+                {
+                    _loop = true;
+                    execute(stmt.body);
+                    _continue = false;
+                }
             }
             _loop = false;
             _break = false;

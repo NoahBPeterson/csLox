@@ -108,11 +108,13 @@ namespace Lox
         {
             public readonly Expr condition;
             public readonly Statement body;
+            public readonly bool doWhileLoop;
 
-            public whileStmt(Expr c, Statement b)
+            public whileStmt(Expr c, Statement b, bool d)
             {
                 condition = c;
                 body = b;
+                doWhileLoop = d;
             }
 
             public override T accept<T>(Visitor<T> visitor)

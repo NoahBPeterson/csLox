@@ -16,6 +16,7 @@ namespace Lox
             { "break", TokenType.BREAK},
             { "continue", TokenType.CONTINUE },
             { "class", TokenType.CLASS },
+            { "do", TokenType.DO },
             { "else", TokenType.ELSE },
             { "false", TokenType.FALSE },
             { "for", TokenType.FOR },
