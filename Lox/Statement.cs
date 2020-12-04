@@ -123,17 +123,31 @@ namespace Lox
 
         public class breakStmt : Statement
         {
-            public readonly Token name;
+            public readonly Token keyword;
             public breakStmt(Token n)
             {
-                name = n;
+                keyword = n;
             }
 
             public override T accept<T>(Visitor<T> visitor)
             {
                 return visitor.visitBreakStatement(this);
             }
+        }
 
+        public class continueStmt : Statement
+        {
+            public readonly Token keyword;
+
+            public continueStmt(Token n)
+            {
+                keyword = n;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitContinueStatement(this);
+            }
         }
         public class Return : Statement
         {
@@ -173,6 +187,7 @@ namespace Lox
         }
         public interface Visitor<T>
         {
+            T visitContinueStatement(Statement.continueStmt continueStatement);
             T visitClassStatement(Statement.Class classStatement);
             T visitReturnStatement(Statement.Return returnStmt);
             T visitFunction(Statement.function func);

@@ -44,7 +44,7 @@ namespace Lox.HelperFunctions
 
         public Token visitBreakStatement(Statement.breakStmt breakStmt)
         {
-            return breakStmt.name;
+            return breakStmt.keyword;
         }
 
         public Token visitCallExpr(Expr.Call call)
@@ -140,6 +140,11 @@ namespace Lox.HelperFunctions
         public Token visitSuperExpr(Expr.Super super)
         {
             return super.keyword;
+        }
+
+        public Token visitContinueStatement(Statement.continueStmt continueStatement)
+        {
+            return continueStatement.keyword;
         }
     }
 }

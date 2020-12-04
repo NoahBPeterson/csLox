@@ -13,6 +13,7 @@ namespace Lox
         private readonly Dictionary<Expr, int> locals = new Dictionary<Expr, int>();
         private Environment environment;
         private bool _break = false;
+        private bool _continue = false;
         private bool _loop = false;
 
         public Interpreter()
@@ -61,6 +62,10 @@ namespace Lox
                     if(_break && _loop)
                     {
                         break;
+                    }else if(_continue && _loop)
+                    {
+                        _continue = false;
+                        break; //Exits the loop, but doesn't prevent while loop from executing the body again.
                     }else
                     {
                         execute(statement);
@@ -309,9 +314,11 @@ namespace Lox
             {
                 _loop = true;
                 execute(stmt.body);
+                _continue = false;
             }
             _loop = false;
             _break = false;
+            _continue = false;
             return null;
         }
 
@@ -478,6 +485,12 @@ namespace Lox
                 throw new Exceptions.RuntimeError(super.method, "Undefined property '" + super.method.lexeme + "'.");
             }
             return method.bind(_object);
+        }
+
+        public object visitContinueStatement(Statement.continueStmt continueStatement)
+        {
+            _continue = true;
+            return null;
         }
     }
 }

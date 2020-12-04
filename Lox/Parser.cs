@@ -113,6 +113,18 @@ namespace Lox
                     consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
                 }
             }
+            if(match(TokenType.CONTINUE))
+            {
+                if(parsingLoop)
+                {
+                    consume(TokenType.SEMICOLON, "Expected ';' after continue statement.");
+                    return new Statement.continueStmt(previous());
+                }else
+                {
+                    error(previous(), "Cannot use continue statement outside of loop structure.");
+                    consume(TokenType.SEMICOLON, "Expected ';' after continue statement.");
+                }
+            }
             return expressionStatement();
         }
 

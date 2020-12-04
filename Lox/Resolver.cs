@@ -144,7 +144,7 @@ namespace Lox
 
         public object visitBreakStatement(Statement.breakStmt breakStmt)
         {
-            if (!isInLoop) Lox.error(breakStmt.name, "Cannot use break statement outside of a loop.");
+            if (!isInLoop) Lox.error(breakStmt.keyword, "Cannot use break statement outside of a loop.");
             return null;
         }
 
@@ -368,6 +368,12 @@ namespace Lox
                 Lox.error(super.keyword, "Can't use 'super' in a class with no superclass.");
             }
             resolveLocal(super, super.keyword);
+            return null;
+        }
+
+        public object visitContinueStatement(Statement.continueStmt continueStatement)
+        {
+            if (!isInLoop) Lox.error(continueStatement.keyword, "Cannot use continue statement outside of a loop.");
             return null;
         }
 
