@@ -389,6 +389,22 @@ namespace Lox
             return null;
         }
 
+        public object visitLambdaFunction(Expr.Lambda lambdaFunction)
+        {
+            FunctionType enclosingFunction = currentFunction;
+            currentFunction = FunctionType.FUNCTION;
+            beginScope();
+            foreach (Token _param in lambdaFunction._params)
+            {
+                declare(_param);
+                define(_param);
+            }
+            resolve(lambdaFunction.body);
+            endScope();
+            currentFunction = enclosingFunction;
+            return null;
+        }
+
         public class Variable
         {
             public Token name;

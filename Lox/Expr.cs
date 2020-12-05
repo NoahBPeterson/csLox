@@ -268,11 +268,30 @@ namespace Lox
             }
         }
 
+        public class Lambda : Expr
+        {
+            public readonly Token keyword;
+            public readonly List<Token> _params;
+            public readonly List<Statement> body;
+
+            public Lambda(Token k, List<Token> _p, List<Statement> b)
+            {
+                keyword = k;
+                _params = _p;
+                body = b;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitLambdaFunction(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
+        T visitLambdaFunction(Expr.Lambda lambdaFunction);
         T visitPrefixExpr(Expr.prefix pf);
-
         T visitPostfixExpr(Expr.postfix pf);
         T visitSuperExpr(Expr.Super super);
         T visitThisExpr(Expr.This _this);

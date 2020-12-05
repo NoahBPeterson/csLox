@@ -555,5 +555,12 @@ namespace Lox
 
             return value;
         }
+
+        public object visitLambdaFunction(Expr.Lambda lambdaFunction)
+        {
+            LoxFunction function = new LoxFunction(lambdaFunction, environment, false);
+
+            return function; //If the function is lambda
+        }
     }
 }

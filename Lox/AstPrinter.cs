@@ -113,5 +113,10 @@ namespace Lox
         {
             return parenthesize(pf.keyword.lexeme+"p", new Expr[] { pf.expr });
         }
+
+        public string visitLambdaFunction(Expr.Lambda lambdaFunction)
+        {
+            return parenthesize(lambdaFunction.keyword.lexeme, new Expr[] { });
+        }
     }
 }

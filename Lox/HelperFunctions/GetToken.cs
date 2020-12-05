@@ -156,5 +156,10 @@ namespace Lox.HelperFunctions
         {
             return pf.keyword;
         }
+
+        public Token visitLambdaFunction(Expr.Lambda lambdaFunction)
+        {
+            return lambdaFunction.keyword;
+        }
     }
 }

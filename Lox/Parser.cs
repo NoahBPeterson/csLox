@@ -267,12 +267,8 @@ namespace Lox
 
         private Statement.function function(String kind)
         {
-            Token name = new Token(TokenType.FUNC, "lambda", null, peek().line);
+            Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
 
-            if (!kind.Equals("lambda"))
-            {
-                name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
-            }
             if(kind.Equals("method") && match(TokenType.LEFT_BRACE))
             {
                 List<Statement> bodyStmts = block();
@@ -550,6 +546,29 @@ namespace Lox
             if(match(TokenType.IDENTIFIER))
             {
                 return new Expr.Variable(previous());
+            }
+
+            if(match(TokenType.FUNC))
+            {
+                Token name = previous();
+
+                consume(TokenType.LEFT_PAREN, "Expect '(' after function declaration.");
+                List<Token> parameters = new List<Token>();
+                if (!check(TokenType.RIGHT_PAREN))
+                {
+                    do
+                    {
+                        if (parameters.Count >= 255)
+                        {
+                            error(peek(), "Can't have more than 255 parameters.");
+                        }
+                        parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
+                    } while (match(TokenType.COMMA));
+                }
+                consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+                consume(TokenType.LEFT_BRACE, "Expect '{' before function body.");
+                List<Statement> body = block();
+                return new Expr.Lambda(name, parameters, body);
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.
