@@ -427,9 +427,9 @@ namespace Lox
                 if (method._params.Count == 1 && method._params.ElementAt(0).type == TokenType.SEMICOLON && method._params.ElementAt(0).lexeme.Equals("getter"))
                 {
                     Statement.function noParams = new Statement.function(method.name, new List<Token>(), method.body);
-                    LoxFunction getter = new LoxFunction(noParams, environment, false);
+                    LoxFunction getter = new LoxFunction(noParams, environment, false, true);
                     methods.Add(method.name.lexeme, getter);
-                    getters[getter]  = method.name;
+                    getters[getter] = method.name;
                 }
                 else
                 {
@@ -462,10 +462,13 @@ namespace Lox
                 object result = ((LoxInstance)_object).get(get.name);
                 if (result is LoxFunction)
                 {
-                    //return ((LoxFunction)result).call(this, null);
+                    if (((LoxFunction)result).isGetter())
+                    {
+                        return ((LoxFunction)result).call(this, null);
+                    }
                 }
 
-                return ((LoxInstance)_object).get(get.name);
+                return result;
             }
 
             throw new Exceptions.RuntimeError(get.name, "Only instances have properties.");
