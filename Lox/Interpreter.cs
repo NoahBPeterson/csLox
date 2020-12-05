@@ -99,6 +99,16 @@ namespace Lox
                 case TokenType.LESS_THAN_EQUALS:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     return (double)left <= (double)right;
+                case TokenType.EQUALS_EQUALS:
+                    if (left is double && right is double)
+                    {
+                        return (double)left == (double)right;
+                    }
+                    if (left is string && right is string)
+                    {
+                        return ((string)left).Equals((string)right);
+                    }
+                    return null;
                 case TokenType.EXCLAMATION:
                     return isEqual(left, right);
                 case TokenType.EXCLAMATION_EQUALS:
