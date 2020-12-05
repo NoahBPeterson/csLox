@@ -40,12 +40,12 @@ namespace Lox
 
         public string visitVariable(Expr.Variable variable)
         {
-            return parenthesize(variable.name.lexeme, new Expr[] { variable });
+            return parenthesize(variable.name.lexeme, new Expr[] {});
         }
 
         public string visitAssignExpr(Expr.AssignExpr assignExpr)
         {
-            return parenthesize(assignExpr.name.lexeme, new Expr[] { assignExpr.value });
+            return parenthesize("= "+assignExpr.name.lexeme, new Expr[] { assignExpr.value });
         }
 
         private string parenthesize(string name, Expr[] exprs)
@@ -78,30 +78,31 @@ namespace Lox
                     expressions[i] = (Expr) call.expressionArguments[i];
                 } else if(call.expressionArguments[i] is Statement.function)
                 {
-                    expressions[i] = new Expr.Literal("<lambda>", null);
+                    Statement.function lambda = (Statement.function)call.expressionArguments[i];
+                    expressions[i] = new Expr.Lambda(lambda.name, lambda._params, lambda.body);
                 }
             }
-            return parenthesize("()", null);
+            return parenthesize(call.callee.ToString(), expressions);
         }
 
         public string visitSetExpr(Expr.Set set)
         {
-            return parenthesize(set.name.lexeme, new Expr[] { set.value, set._object });
+            return "(= "+set._object.accept(this)+"."+set.name.lexeme+" "+set.value.accept(this)+")";
         }
 
         public string visitGetExpr(Expr.Get get)
         {
-            return parenthesize(get.name.lexeme, new Expr[] { get._object });
+            return "("+get._object.accept(this) + "." + get.name.lexeme+")";
         }
 
         public string visitThisExpr(Expr.This _this)
         {
-            return parenthesize(_this.keyword.lexeme, new Expr[] { });
+            return "(this)";
         }
 
         public string visitSuperExpr(Expr.Super super)
         {
-            return parenthesize(super.keyword.lexeme, new Expr[] { });
+            return "(super)";
         }
 
         public string visitPrefixExpr(Expr.prefix pf)
