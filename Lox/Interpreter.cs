@@ -515,19 +515,45 @@ namespace Lox
         {
             object value = evaluate(pf.expr);
 
-            if(pf.expr is Expr.v)
+            checkNumberOperand(pf.keyword, value);
+            if (pf.keyword.type == TokenType.PLUS_PLUS)
+            {
+                value = ((double)value) + 1.0;
+            }else
+            {
+                value = ((double)value) - 1.0;
+            }
             int distance = -1;
             locals.TryGetValue(pf, out distance);
             if (distance != -1)
             {
-                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), value);
+                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value); //Assign value after change.
             }
             return value;
         }
 
         public object visitPostfixExpr(Expr.postfix pf)
         {
-            throw new NotImplementedException();
+            object value = evaluate(pf.expr);
+
+            checkNumberOperand(pf.keyword, value);
+            object returnValue = value;
+            if (pf.keyword.type == TokenType.PLUS_PLUS)
+            {
+                returnValue = ((double)value) + 1.0;
+            }
+            else
+            {
+                returnValue = ((double)value) - 1.0;
+            }
+            int distance = -1;
+            locals.TryGetValue(pf, out distance);
+            if (distance != -1)
+            {
+                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value);
+            }
+
+            return returnValue;
         }
     }
 }
