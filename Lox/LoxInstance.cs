@@ -41,6 +41,11 @@ namespace Lox
 
         public void set(Token name, Object value)
         {
+            if(fields.ContainsKey(name.lexeme))
+            {
+                fields[name.lexeme] = value;
+                return;
+            }
             fields.Add(name.lexeme, value);
         }
     }
