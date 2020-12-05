@@ -380,13 +380,13 @@ namespace Lox
         public object visitPrefixExpr(Expr.prefix pf) //These two functions may need further resolution
         {
             resolve(pf.expr);
-            //return null;
+            return null;
         }
 
         public object visitPostfixExpr(Expr.postfix pf)
         {
             resolve(pf.expr);
-            //return null;
+            return null;
         }
 
         public class Variable

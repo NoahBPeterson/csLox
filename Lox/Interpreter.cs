@@ -537,23 +537,23 @@ namespace Lox
             object value = evaluate(pf.expr);
 
             checkNumberOperand(pf.keyword, value);
-            object returnValue = value;
+            object assignValue = value;
             if (pf.keyword.type == TokenType.PLUS_PLUS)
             {
-                returnValue = ((double)value) + 1.0;
+                assignValue = ((double)value) + 1.0;
             }
             else
             {
-                returnValue = ((double)value) - 1.0;
+                assignValue = ((double)value) - 1.0;
             }
             int distance = -1;
             locals.TryGetValue(pf, out distance);
             if (distance != -1)
             {
-                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value);
+                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)assignValue);
             }
 
-            return returnValue;
+            return value;
         }
     }
 }

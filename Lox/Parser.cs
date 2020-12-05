@@ -257,7 +257,7 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr.GetType() == typeof(Expr.AssignExpr) || expr.GetType() == typeof(Expr.Call) || expr is Expr.Set)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix)
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
@@ -459,13 +459,14 @@ namespace Lox
 
         private Expr postfix()
         {
-            Expr prim = primary();
+            Expr prim = call();
+            if (prim is Expr.Get || prim is Expr.Call) return prim;
             if (match(TokenType.MINUS_MINUS, TokenType.PLUS_PLUS))
             {
                 Token _operator = previous();
                 return new Expr.postfix(_operator, prim);
             }
-            return call();
+            return prim;
         }
 
         private Expr finishCall(Expr callee)
@@ -548,7 +549,7 @@ namespace Lox
 
             if(match(TokenType.IDENTIFIER))
             {
-                Expr identifier = new Expr.Variable(previous());
+                return new Expr.Variable(previous());
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.
