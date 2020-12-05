@@ -103,5 +103,15 @@ namespace Lox
         {
             return parenthesize(super.keyword.lexeme, new Expr[] { });
         }
+
+        public string visitPrefixExpr(Expr.prefix pf)
+        {
+            return parenthesize("p"+pf.keyword.lexeme, new Expr[] { pf.expr });
+        }
+
+        public string visitPostfixExpr(Expr.postfix pf)
+        {
+            return parenthesize(pf.keyword.lexeme+"p", new Expr[] { pf.expr });
+        }
     }
 }

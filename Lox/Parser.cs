@@ -443,6 +443,28 @@ namespace Lox
                 Expr right = unary();
                 return new Expr.UnaryExpr(_operator, right);
             }
+            return prefix();
+        }
+
+        private Expr prefix()
+        {
+            if (match(TokenType.MINUS_MINUS, TokenType.PLUS_PLUS))
+            {
+                Token _operator = previous();
+                Expr pre = primary();
+                return new Expr.prefix(_operator, pre);
+            }
+            return postfix();
+        }
+
+        private Expr postfix()
+        {
+            Expr prim = primary();
+            if (match(TokenType.MINUS_MINUS, TokenType.PLUS_PLUS))
+            {
+                Token _operator = previous();
+                return new Expr.postfix(_operator, prim);
+            }
             return call();
         }
 
@@ -526,7 +548,7 @@ namespace Lox
 
             if(match(TokenType.IDENTIFIER))
             {
-                return new Expr.Variable(previous());
+                Expr identifier = new Expr.Variable(previous());
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.

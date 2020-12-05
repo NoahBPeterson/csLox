@@ -171,6 +171,12 @@ namespace Lox
                 case TokenType.MINUS:
                     checkNumberOperand(unaryExpr.operatorToken, right);
                     return -(double)right;
+                case TokenType.MINUS_MINUS:
+                    checkNumberOperand(unaryExpr.operatorToken, right);
+                    return (double) right - 1.0;
+                case TokenType.PLUS_PLUS:
+                    checkNumberOperand(unaryExpr.operatorToken, right);
+                    return (double) right + 1.0;
             }
             return null;
         }
@@ -503,6 +509,25 @@ namespace Lox
         {
             _continue = true;
             return null;
+        }
+
+        public object visitPrefixExpr(Expr.prefix pf)
+        {
+            object value = evaluate(pf.expr);
+
+            if(pf.expr is Expr.v)
+            int distance = -1;
+            locals.TryGetValue(pf, out distance);
+            if (distance != -1)
+            {
+                environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), value);
+            }
+            return value;
+        }
+
+        public object visitPostfixExpr(Expr.postfix pf)
+        {
+            throw new NotImplementedException();
         }
     }
 }

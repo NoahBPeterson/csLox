@@ -7,7 +7,7 @@ using static Lox.Token;
 
 namespace Lox
 {
-    public class Resolver : Visitor<Object>, Statement.Visitor<Object>
+    public class Resolver : Visitor<object>, Statement.Visitor<object>
     {
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, Variable>> scopes = new Stack<Dictionary<string, Variable>>();
@@ -374,6 +374,18 @@ namespace Lox
         public object visitContinueStatement(Statement.continueStmt continueStatement)
         {
             if (!isInLoop) Lox.error(continueStatement.keyword, "Cannot use continue statement outside of a loop.");
+            return null;
+        }
+
+        public object visitPrefixExpr(Expr.prefix pf)
+        {
+            resolve(pf.expr);
+            return null;
+        }
+
+        public object visitPostfixExpr(Expr.postfix pf)
+        {
+            resolve(pf.expr);
             return null;
         }
 

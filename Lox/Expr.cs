@@ -234,9 +234,46 @@ namespace Lox
             }
         }
 
+        public class prefix : Expr
+        {
+            public readonly Token keyword;
+            public readonly Expr expr;
+
+            public prefix(Token k, Expr e)
+            {
+                keyword = k;
+                expr = e;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitPrefixExpr(this);
+            }
+        }
+
+        public class postfix : Expr
+        {
+            public readonly Token keyword;
+            public readonly Expr expr;
+
+            public postfix(Token k, Expr e)
+            {
+                keyword = k;
+                expr = e;
+            }
+
+            public override T accept<T>(Visitor<T> visitor)
+            {
+                return visitor.visitPostfixExpr(this);
+            }
+        }
+
     }
     public interface Visitor<T>
     {
+        T visitPrefixExpr(Expr.prefix pf);
+
+        T visitPostfixExpr(Expr.postfix pf);
         T visitSuperExpr(Expr.Super super);
         T visitThisExpr(Expr.This _this);
         T visitSetExpr(Expr.Set set);

@@ -146,5 +146,15 @@ namespace Lox.HelperFunctions
         {
             return continueStatement.keyword;
         }
+
+        public Token visitPrefixExpr(Expr.prefix pf)
+        {
+            return pf.keyword;
+        }
+
+        public Token visitPostfixExpr(Expr.postfix pf)
+        {
+            return pf.keyword;
+        }
     }
 }
