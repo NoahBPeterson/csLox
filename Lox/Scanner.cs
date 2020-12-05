@@ -87,7 +87,20 @@ namespace Lox
                     { //Comments
                         while (peek() != '\n' && !isAtEnd())
                         { advance(); }
-                    } else {
+                    } else if (Match('*'))
+                    {
+                        do
+                        {
+                            if (peek() == '*' && peekNext() == '/')
+                            {
+                                advance();
+                                advance();
+                                break;
+                            }
+                            advance();
+                        } while (!isAtEnd());
+                    } else
+                    {
                         addToken(TokenType.FORWARD_SLASH);
                     }
                     break;
