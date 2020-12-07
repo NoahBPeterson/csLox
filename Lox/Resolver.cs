@@ -281,16 +281,20 @@ namespace Lox
             define(classStatement.name);
 
 
-            if (classStatement.superclass != null)
+            if (classStatement.superclass.Count != 0)
             {
-                if (classStatement.name.lexeme.Equals(classStatement.superclass.name.lexeme))
-                {
-                    Lox.error(classStatement.superclass.name, "A class can't inherit from itself.");
-                }
+
                 currentClass = ClassType.SUBCLASS;
-                resolve(classStatement.superclass);
+                foreach(Expr.Variable superClass in classStatement.superclass)
+                {
+                    if (classStatement.name.lexeme.Equals(superClass.name.lexeme))
+                    {
+                        Lox.error(superClass.name, "A class can't inherit from itself.");
+                    }
+                    resolve(superClass);
+                }
                 beginScope();
-                Variable sup = new Variable(classStatement.name);
+                Variable sup = new Variable(classStatement.name); //Class name is a variable, but the user likely won't want to be warned about it being unused.
                 sup.initialized = true;
                 sup.used = true;
                 scopes.Peek().Add("super", sup);
@@ -327,7 +331,7 @@ namespace Lox
             }
             endScope();
 
-            if (classStatement.superclass != null) endScope();
+            if(classStatement.superclass.Count > 0) endScope();
 
             currentClass = enclosingClass;
             return null;

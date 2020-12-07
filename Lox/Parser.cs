@@ -64,11 +64,14 @@ namespace Lox
         {
             Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
 
-            Expr.Variable superclass = null;
-            if(match(TokenType.LESS_THAN))
+            List<Expr.Variable> superClasses = new List<Expr.Variable>();
+            if (match(TokenType.LESS_THAN))
             {
-                consume(TokenType.IDENTIFIER, "Expect superclass name.");
-                superclass = new Expr.Variable(previous());
+                do
+                {
+                    consume(TokenType.IDENTIFIER, "Expect superclass name.");
+                    superClasses.Add(new Expr.Variable(previous()));
+                } while (match(TokenType.COMMA));
             }
 
 
@@ -90,7 +93,7 @@ namespace Lox
             }
 
             consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
-            return new Statement.Class(name, superclass, methods, staticFunctions);
+            return new Statement.Class(name, superClasses, methods, staticFunctions);
         }
 
         private Statement statement()

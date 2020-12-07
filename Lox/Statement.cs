@@ -171,11 +171,11 @@ namespace Lox
         public class Class : Statement
         {
             public readonly Token name;
-            public readonly Expr.Variable superclass;
+            public readonly List<Expr.Variable> superclass;
             public readonly List<Statement.function> methods;
             public readonly List<Statement.function> staticFunctions;
 
-            public Class(Token n, Expr.Variable sC, List<Statement.function> m, List<Statement.function> sF)
+            public Class(Token n, List<Expr.Variable> sC, List<Statement.function> m, List<Statement.function> sF)
             {
                 name = n;
                 superclass = sC;

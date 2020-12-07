@@ -413,26 +413,39 @@ namespace Lox
 
         public object visitClassStatement(Statement.Class classStatement)
         {
-            Object superclass = null;
-            if(classStatement.superclass != null)
+            List<LoxClass> superClasses = new List<LoxClass>();
+            if (classStatement.superclass.Count != 0)
             {
-                superclass = evaluate(classStatement.superclass);
-                if(!(superclass is LoxClass))
+                foreach(Object superClass in classStatement.superclass)
                 {
-                    throw new Exceptions.RuntimeError(classStatement.superclass.name, "Superclass must be a class.");
+                    Object eval = evaluate((Expr.Variable)superClass);
+                    if (!(eval is LoxClass))
+                    {
+                        throw new Exceptions.RuntimeError(new HelperFunctions.GetToken().evaluate((Expr)superClass), "Superclass must be a class.");
+                    }
+                    else
+                    {
+                        superClasses.Add((LoxClass)eval);
+                    }
                 }
             }
+
             environment.define(classStatement.name.lexeme, null);
 
-            if(classStatement.superclass != null)
+            if(classStatement.superclass.Count != 0)
             {
                 environment = new Environment(environment);
-                environment.define("super", superclass);
+                environment.define("super", superClasses);
             }
 
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
             Dictionary<LoxFunction, Token> getters = new Dictionary<LoxFunction, Token>();
-            foreach (Statement.function method in classStatement.methods)
+            List<Statement.function> methodsList = classStatement.methods;
+            foreach(LoxClass superclass in superClasses)
+            {
+                superclass.
+            }
+            foreach (Statement.function method in methodsList)
             {
                 if (method._params.Count == 1 && method._params.ElementAt(0).type == TokenType.SEMICOLON && method._params.ElementAt(0).lexeme.Equals("getter"))
                 {
@@ -447,7 +460,7 @@ namespace Lox
                     methods.Add(method.name.lexeme, function);
                 }
             }
-            LoxClass _class = new LoxClass(classStatement.name.lexeme, (LoxClass) superclass, methods);
+            LoxClass _class = new LoxClass(classStatement.name.lexeme, superClasses, methods);
             foreach(Statement.function staticFunction in classStatement.staticFunctions)
             {
                 _class.set(staticFunction.name, staticFunction);
@@ -456,7 +469,7 @@ namespace Lox
             {
                 _class.set(getters[getter], getter);
             }
-            if(superclass != null)
+            if(superClasses.Count != 0)
             {
                 environment = environment.enclosing;
             }
@@ -508,7 +521,7 @@ namespace Lox
             int distance = -1;
             locals.TryGetValue(super, out distance);
             //if (distance != -1)
-            LoxClass superClass = (LoxClass)environment.getAt(distance, "super");
+            List<LoxClass> superClasses = (List<LoxClass>)environment.getAt(distance, "super");
             LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this"); //May have to find a fix for this given my implementation of getAt().
             LoxFunction method = superClass.findMethod(super.method.lexeme);
             if (method == null)
