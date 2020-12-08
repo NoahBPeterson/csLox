@@ -441,10 +441,6 @@ namespace Lox
             Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
             Dictionary<LoxFunction, Token> getters = new Dictionary<LoxFunction, Token>();
             List<Statement.function> methodsList = classStatement.methods;
-            foreach(LoxClass superclass in superClasses)
-            {
-                superclass.
-            }
             foreach (Statement.function method in methodsList)
             {
                 if (method._params.Count == 1 && method._params.ElementAt(0).type == TokenType.SEMICOLON && method._params.ElementAt(0).lexeme.Equals("getter"))
@@ -523,7 +519,12 @@ namespace Lox
             //if (distance != -1)
             List<LoxClass> superClasses = (List<LoxClass>)environment.getAt(distance, "super");
             LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this"); //May have to find a fix for this given my implementation of getAt().
-            LoxFunction method = superClass.findMethod(super.method.lexeme);
+            LoxFunction method = null;
+            foreach(LoxClass superClass in superClasses)
+            {
+                method = superClass.findMethod(super.method.lexeme);
+                if (method != null) break;
+            }
             if (method == null)
             {
                 throw new Exceptions.RuntimeError(super.method, "Undefined property '" + super.method.lexeme + "'.");
