@@ -33,8 +33,8 @@ namespace Lox
         {
             if(File.Exists(path))
             {
-                byte[] Filebytes = File.ReadAllBytes(path);
-                run(Encoding.BigEndianUnicode.GetString(Filebytes));
+                string sourceFile = File.ReadAllText(path);
+                run(sourceFile);
 
                 if (hadError)
                 {
