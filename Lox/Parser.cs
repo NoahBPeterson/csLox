@@ -276,7 +276,7 @@ namespace Lox
             {
                 List<Statement> bodyStmts = block();
                 List<Token> sentinelParam = new List<Token>();
-                sentinelParam.Add(new Token(TokenType.SEMICOLON, "getter", null, name.line)); //Make an impossible Token
+                sentinelParam.Add(new Token(TokenType.SEMICOLON, "getter", null, name.line, name.characters)); //Make an impossible Token
                 return new Statement.function(name, sentinelParam, bodyStmts);
             }
             consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");

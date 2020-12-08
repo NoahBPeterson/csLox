@@ -8,13 +8,15 @@ namespace Lox
         public string lexeme;
         public object literal;
         public int line;
+        public int characters;
 
-        public Token(TokenType type, string lexeme, object literal, int line)
+        public Token(TokenType type, string lexeme, object literal, int line, int characters)
         {
             this.type = type;
             this.lexeme = lexeme;
             this.literal = literal;
             this.line = line;
+            this.characters = characters;
         }
 
         public static List<Token> Tokenize(string input)

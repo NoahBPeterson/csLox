@@ -57,7 +57,7 @@ namespace Lox
                 {
                     arg = new LoxFunction((Statement.function) arguments[i], environment, false);
                 }
-                environment.define(declaration._params[i].lexeme, arg);
+                environment.define(declaration._params[i].lexeme, arg, declaration._params[i]);
             }
             try
             {

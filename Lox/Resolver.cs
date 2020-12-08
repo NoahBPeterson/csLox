@@ -301,7 +301,7 @@ namespace Lox
             }
 
             beginScope();
-            Token thisVar = new Token(TokenType.THIS_OBJECT, "this", null, -1);
+            Token thisVar = new Token(TokenType.THIS_OBJECT, "this", null, -1, -1);
             Variable varHacky = new Variable(thisVar);
             varHacky.initialized = true;
             scopes.Peek().Add("this", varHacky);

@@ -20,7 +20,7 @@ namespace Lox.HelperFunctions
 
         private Token defaultToken()
         {
-            return new Token(Token.TokenType.EOF, "", null, 0);
+            return new Token(Token.TokenType.EOF, "", null, 0, -1);
         }
 
         public Token visitAssignExpr(Expr.AssignExpr assignExpr)
@@ -114,7 +114,7 @@ namespace Lox.HelperFunctions
 
         public Token visitWhileStatement(Statement.whileStmt whileStmt)
         {
-            return new Token(Token.TokenType.WHILE, "while", null, evaluate(whileStmt.condition).line);
+            return new Token(Token.TokenType.WHILE, "while", null, evaluate(whileStmt.condition).line, evaluate(whileStmt.condition).characters);
         }
 
         public Token visitClassStatement(Statement.Class classStatement)

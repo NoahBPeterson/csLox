@@ -271,7 +271,7 @@ namespace Lox
             {
                 value = evaluate(varStmt.initializer);
             }
-            environment.define(varStmt.name.lexeme, value);
+            environment.define(varStmt.name.lexeme, value, varStmt.name);
             return null;
         }
 
@@ -396,7 +396,7 @@ namespace Lox
             LoxFunction function = new LoxFunction(func, environment, false);
             if (func.name != null) //If the function is named
             {
-                environment.define(func.name.lexeme, function);
+                environment.define(func.name.lexeme, function, func.name);
                 return null;
             }
 
@@ -430,7 +430,7 @@ namespace Lox
                 }
             }
 
-            environment.define(classStatement.name.lexeme, null);
+            environment.define(classStatement.name.lexeme, null, classStatement.name);
 
             if(classStatement.superclass.Count != 0)
             {

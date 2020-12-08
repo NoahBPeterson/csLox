@@ -40,16 +40,22 @@ namespace Lox
             }
             return environment;
         }
-
         public void define(String name, Object value)
+        {
+            define(name, value, null);
+        }
+
+        public void define(String name, Object value, Token token)
         {
             if (!values.ContainsKey(name))
             {
                 values.Add(name, value);
                 return;
             }
-            throw new Exceptions.RuntimeError(new Token(Token.TokenType.VAR, name, value, 0), "The var "+name+" has already been defined.");
-                
+            if(token == null)
+                throw new Exceptions.RuntimeError(new Token(Token.TokenType.VAR, name, value, 0, -1), "The var "+name+" has already been defined.");
+            throw new Exceptions.RuntimeError(token, "The var " + name + " has already been defined.");
+
         }
 
         public Object getAt(int distance, string name)

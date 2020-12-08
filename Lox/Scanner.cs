@@ -37,6 +37,7 @@ namespace Lox
         private int start = 0;
         private int current = 0;
         private int line = 1;
+        private int lineCharCounter = 0;
 
         public Scanner(string source)
         {
@@ -51,7 +52,7 @@ namespace Lox
                 scanToken();
             }
 
-            tokens.Add(new Token(TokenType.EOF, "", null, line));
+            tokens.Add(new Token(TokenType.EOF, "", null, line, lineCharCounter));
 
             return tokens;
         }
@@ -87,11 +88,16 @@ namespace Lox
                     { //Comments
                         while (peek() != '\n' && !isAtEnd())
                         { advance(); }
+                        lineCharCounter = 0; // Reset at the end of lines.
                     } else if (Match('*'))
                     {
                         do
                         {
-                            if (peek() == '*' && peekNext() == '/')
+                            if (peek() == '\n')
+                            {
+                                lineCharCounter = 0;
+                                line++;
+                            }else if (peek() == '*' && peekNext() == '/')
                             {
                                 advance();
                                 advance();
@@ -110,6 +116,7 @@ namespace Lox
                     break; //Whitespace characters
                 case '\n': //Newline character
                     line++;
+                    lineCharCounter = 0;
                     break;
                 case '"': stringScanner(); break;
                 case 'o': //'or' but not 'orchid'
@@ -136,7 +143,7 @@ namespace Lox
                         identifier();
                     } else
                     {
-                        Lox.error(line, "Unexpected character.");
+                        Lox.error(line, lineCharCounter, "Unexpected character: "+c);
                     }
                     break;
             }
@@ -238,12 +245,14 @@ namespace Lox
             if (source.ToCharArray()[current] != expected)
             { return false; }
 
+            lineCharCounter++;
             current++;
             return true;
         }
 
         private char advance()
         {
+            lineCharCounter++;
             current++;
             char[] c = source.ToCharArray();
             return c[current - 1];
@@ -257,7 +266,7 @@ namespace Lox
         private void addToken(TokenType type, object literal)
         {
             string text = source.Substring(start, current-start);
-            tokens.Add(new Token(type, text, literal, line));
+            tokens.Add(new Token(type, text, literal, line, lineCharCounter));
         }
 
 

@@ -86,12 +86,20 @@ namespace Lox
 
         public static void error(int line, String message)
         {
-            report(line, "", message);
+            report(line, -1, "", message);
         }
 
-        private static void report(int line, String where, String message)
+        public static void error(int line, int character, String message)
         {
-            Console.Error.WriteLine("[line " + line + "] Error" + where + ": " + message);
+            report(line, character, "", message);
+        }
+
+        private static void report(int line, int character, String where, String message)
+        {
+            string build = "[line " + line;
+            if (character != -1) build += ":" + character;
+            build += "] Error" + where + ": " + message;
+            Console.Error.WriteLine(build);
             hadError = true;
         }
 
@@ -99,10 +107,10 @@ namespace Lox
         {
             if (token.type == Token.TokenType.EOF)
             {
-                report(token.line, " at end", message);
+                report(token.line, -1, " at end", message);
             }else
             {
-                report(token.line, " at '" + token.lexeme + "'", message);
+                report(token.line, token.characters, " at '" + token.lexeme + "'", message);
             }
         }
 
