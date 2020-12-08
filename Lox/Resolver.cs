@@ -241,14 +241,24 @@ namespace Lox
 
         public object visitVariable(Expr.Variable variable)
         {
+            Variable value = null;
             if (scopes.Count != 0)
             {
-                Variable value = null;
                 scopes.Peek().TryGetValue(variable.name.lexeme, out value);
                 if (scopes.Peek().ContainsKey(variable.name.lexeme) && value.initialized == false)
                     Lox.error(variable.name, "Can't read local variable in its own initializer.");
             }
-            resolveLocal(variable, variable.name);
+            if (value == null)
+            {
+                object var = interpreter.visitVariable(variable);
+                if(var == null)
+                {
+                    Lox.error(new HelperFunctions.GetToken().evaluate(variable), "Tried to reference a variable which does not exist.");
+                }
+            }else
+            {
+                resolveLocal(variable, variable.name);
+            }
             return null;
         }
 
