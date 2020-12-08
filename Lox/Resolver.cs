@@ -253,7 +253,8 @@ namespace Lox
                 object var = interpreter.visitVariable(variable);
                 if(var == null)
                 {
-                    Lox.error(new HelperFunctions.GetToken().evaluate(variable), "Tried to reference a variable which does not exist.");
+                    return null;
+                    //Lox.error(new HelperFunctions.GetToken().evaluate(variable), "Tried to reference a variable which does not exist.");
                 }
             }else
             {
