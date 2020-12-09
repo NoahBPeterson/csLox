@@ -288,7 +288,7 @@ namespace Lox
             {
                 globals.assign(assignExpr.name, value);
             }
-            return null;
+            return value;
         }
 
         public object visitBlockStatement(Statement.Block blockStmt)
