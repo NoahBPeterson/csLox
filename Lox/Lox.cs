@@ -99,7 +99,7 @@ namespace Lox
             string build = "[line " + line;
             if (character != -1) build += ":" + character;
             build += "] Error" + where + ": " + message;
-            Console.Error.WriteLine(build);
+            Console.WriteLine(build);
             hadError = true;
         }
 
@@ -118,11 +118,11 @@ namespace Lox
         {
             if (token.type == Token.TokenType.EOF)
             {
-                Console.Error.WriteLine("[line " + token.line + "] Warning at end: "+message);
+                Console.WriteLine("[line " + token.line + "] Warning at end: "+message);
             }
             else
             {
-                Console.Error.WriteLine("[line " + token.line + ":" + token.characters + "] Warning at '" + token.lexeme + "' "+ message);
+                Console.WriteLine("[line " + token.line + ":" + token.characters + "] Warning at '" + token.lexeme + "' "+ message);
             }
         }
 
