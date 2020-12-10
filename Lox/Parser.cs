@@ -258,19 +258,12 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable || expr is Expr.Get)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix)
             {
-                if(expr is Expr.Variable || expr is Expr.Get) //Preserve REPL by making semicolon after variable access optional.
-                {
-                    if(match(TokenType.SEMICOLON))
-                        return new Statement.Expression(expr);
-                }
-                else
-                {
-                    consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-                    return new Statement.Expression(expr);
-                }
+                consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+                return new Statement.Expression(expr);
             }
+            match(TokenType.SEMICOLON);
             return new Statement.Print(expr);
         }
 
@@ -561,23 +554,27 @@ namespace Lox
             {
                 Token name = previous();
 
-                consume(TokenType.LEFT_PAREN, "Expect '(' after function declaration.");
-                List<Token> parameters = new List<Token>();
-                if (!check(TokenType.RIGHT_PAREN))
+                if(peek().Equals(TokenType.LEFT_PAREN))
                 {
-                    do
+                    consume(TokenType.LEFT_PAREN, "Expect '(' after function declaration.");
+                    List<Token> parameters = new List<Token>();
+                    if (!check(TokenType.RIGHT_PAREN))
                     {
-                        if (parameters.Count >= 255)
+                        do
                         {
-                            throw error(peek(), "Can't have more than 255 parameters.");
-                        }
-                        parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
-                    } while (match(TokenType.COMMA));
+                            if (parameters.Count >= 255)
+                            {
+                                throw error(peek(), "Can't have more than 255 parameters.");
+                            }
+                            parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
+                        } while (match(TokenType.COMMA));
+                    }
+                    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+                    consume(TokenType.LEFT_BRACE, "Expect '{' before function body.");
+                    List<Statement> body = block();
+                    return new Expr.Lambda(name, parameters, body);
                 }
-                consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-                consume(TokenType.LEFT_BRACE, "Expect '{' before function body.");
-                List<Statement> body = block();
-                return new Expr.Lambda(name, parameters, body);
+
             }
 
             //If we find a binary operator but no left binary expression, consume the right-hand expression and throw an error.
