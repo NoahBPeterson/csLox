@@ -99,11 +99,11 @@ namespace Lox
 
         private void resolveLocal(Expr expr, Token name)
         {
-            for(int i = scopes.Count-1; i >= 0; i--)
+            for(int i = 0; i < scopes.Count; i++) //New stacks are at [0], not the end.
             {
                 if(scopes.ElementAt(i).ContainsKey(name.lexeme))
                 {
-                    interpreter.resolve(expr, scopes.Count - 1 - i);
+                    interpreter.resolve(expr, i);// scopes.Count - 1 - i);
                     scopes.ElementAt(i)[name.lexeme].used = true;
                     return;
                 }
