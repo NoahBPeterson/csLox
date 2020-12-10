@@ -55,7 +55,7 @@ namespace Lox
                 Console.Write("> ");
                 run(Console.ReadLine());
                 hadError = false;
-
+                hadRuntimeError = false;
             }
         }
 
@@ -69,7 +69,7 @@ namespace Lox
 
             Resolver resolver = new Resolver(interpreter);
             resolver.resolve(statements);
-            if (hadError) return;
+            if (hadError || hadRuntimeError) return;
 
             interpreter.interpret(statements);
 

@@ -253,9 +253,7 @@ namespace Lox
 
         private Object lookUpVariable(Token name, Expr expr)
         {
-            int distance = -1;
-            locals.TryGetValue(expr, out distance);
-            if(distance != -1)
+            if(locals.TryGetValue(expr, out int distance))
             {
                 return environment.getAt(distance, name.lexeme);
             } else
