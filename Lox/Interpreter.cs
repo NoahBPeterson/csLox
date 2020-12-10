@@ -267,9 +267,7 @@ namespace Lox
         {
             object value = evaluate(assignExpr.value);
 
-            int distance = -1;
-            locals.TryGetValue(assignExpr, out distance);
-            if(distance != -1)
+            if(locals.TryGetValue(assignExpr, out int distance))
             {
                 environment.assignAt(distance, assignExpr.name, value);
             }else
@@ -538,9 +536,7 @@ namespace Lox
             {
                 value = ((double)value) - 1.0;
             }
-            int distance = -1;
-            locals.TryGetValue(pf, out distance);
-            if (distance != -1)
+            if (locals.TryGetValue(pf, out int distance))
             {
                 environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value); //Assign value after change.
             }
@@ -561,9 +557,7 @@ namespace Lox
             {
                 assignValue = ((double)value) - 1.0;
             }
-            int distance = -1;
-            locals.TryGetValue(pf, out distance);
-            if (distance != -1)
+            if (locals.TryGetValue(pf, out int distance))
             {
                 environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)assignValue);
             }
