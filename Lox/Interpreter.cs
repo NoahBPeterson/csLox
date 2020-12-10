@@ -483,7 +483,7 @@ namespace Lox
         {
             Object _object = evaluate(set._object);
 
-            if(!(_object is LoxInstance))
+            if(!(_object is LoxInstance) || (_object is LoxClass))
             {
                 throw new Exceptions.RuntimeError(set.name, "Only instances have fields.");
             }
