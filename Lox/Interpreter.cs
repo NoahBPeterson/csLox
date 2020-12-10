@@ -59,14 +59,14 @@ namespace Lox
 
                 foreach (Statement statement in statements)
                 {
-                    if(_break && _loop)
+                    if (_break && _loop)
                     {
                         break;
-                    }else if(_continue && _loop)
+                    } else if (_continue && _loop)
                     {
                         _continue = false;
                         break; //Exits the loop, but doesn't prevent while loop from executing the body again.
-                    }else
+                    } else
                     {
                         execute(statement);
                     }
@@ -83,7 +83,7 @@ namespace Lox
             object left = evaluate(binaryExpr.left);
             object right = evaluate(binaryExpr.right);
 
-            switch(binaryExpr.operatorToken.type)
+            switch (binaryExpr.operatorToken.type)
             {
                 case TokenType.COMMA:
                     return right;
@@ -107,7 +107,7 @@ namespace Lox
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     return (double)left - (double)right;
                 case TokenType.PLUS:
-                    if(left is double && right is double)
+                    if (left is double && right is double)
                     {
                         return (double)left + (double)right;
                     }
@@ -126,7 +126,7 @@ namespace Lox
                     throw new Exceptions.RuntimeError(binaryExpr.operatorToken, "Operands must be numbers or strings.");
                 case TokenType.FORWARD_SLASH:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
-                    if ((double)right == 0) 
+                    if ((double)right == 0)
                         throw new Exceptions.RuntimeError(binaryExpr.operatorToken, "Cannot divide by zero.");
                     return (double)left / (double)right;
                 case TokenType.ASTERISK:
@@ -151,10 +151,10 @@ namespace Lox
         {
             bool comparisonExpression = (bool)evaluate(ternaryExpr.comparisonExpression);
 
-            if(comparisonExpression)
+            if (comparisonExpression)
             {
                 return evaluate(ternaryExpr.trueExpression);
-            }else
+            } else
             {
                 return evaluate(ternaryExpr.falseExpression);
             }
@@ -173,10 +173,10 @@ namespace Lox
                     return -(double)right;
                 case TokenType.MINUS_MINUS:
                     checkNumberOperand(unaryExpr.operatorToken, right);
-                    return (double) right - 1.0;
+                    return (double)right - 1.0;
                 case TokenType.PLUS_PLUS:
                     checkNumberOperand(unaryExpr.operatorToken, right);
-                    return (double) right + 1.0;
+                    return (double)right + 1.0;
             }
             return null;
         }
@@ -195,23 +195,24 @@ namespace Lox
 
         private bool isTruthy(object objectA)
         {
-            if (objectA == null) 
+            if (objectA == null || objectA is Null)
                 return false;
-            if (objectA is bool) 
-                return (bool) objectA;
+            if (objectA is bool)
+                return (bool)objectA;
             return true;
         }
         private bool isEqual(object a, object b)
         {
-            if (a == null && b == null) return true;
-            if (a == null) return false;
+            if ((a == null && b == null) || (a is null && b is Null) || 
+                (a is Null && b is null) || (a is Null && b is Null)) return true;
+            if (a == null || a is Null) return false;
 
             return a.Equals(b);
         }
 
         private string stringify(object _object)
         {
-            if (_object == null) return "nil";
+            if (_object == null || _object is Null) return "nil";
 
             if (_object.GetType() == typeof(double)) {
                 string text = _object.ToString();
@@ -243,7 +244,7 @@ namespace Lox
 
         private Object lookUpVariable(Token name, Expr expr)
         {
-            if(locals.TryGetValue(expr, out int distance))
+            if (locals.TryGetValue(expr, out int distance))
             {
                 return environment.getAt(distance, name.lexeme);
             } else
@@ -252,13 +253,16 @@ namespace Lox
             }
         }
 
-            public object visitVarStatement(Statement.Var varStmt)
+        public object visitVarStatement(Statement.Var varStmt)
         {
             Object value = null;
-            if(varStmt.initializer != null)
+            if (varStmt.initializer != null)
             {
                 value = evaluate(varStmt.initializer);
+
             }
+            if (value == null)
+                value = new Null();
             environment.define(varStmt.name.lexeme, value, varStmt.name);
             return null;
         }
@@ -267,10 +271,10 @@ namespace Lox
         {
             object value = evaluate(assignExpr.value);
 
-            if(locals.TryGetValue(assignExpr, out int distance))
+            if (locals.TryGetValue(assignExpr, out int distance))
             {
                 environment.assignAt(distance, assignExpr.name, value);
-            }else
+            } else
             {
                 globals.assign(assignExpr.name, value);
             }
@@ -285,10 +289,10 @@ namespace Lox
 
         public object visitIfStatement(Statement.ifStmt ifStmt)
         {
-            if(isTruthy(evaluate(ifStmt.condition)))
+            if (isTruthy(evaluate(ifStmt.condition)))
             {
                 execute(ifStmt.thenBranch);
-            }else if(ifStmt.elseBranch != null)
+            } else if (ifStmt.elseBranch != null)
             {
                 execute(ifStmt.elseBranch);
             }
@@ -351,8 +355,8 @@ namespace Lox
             {
                 if (argument is Expr)
                 {
-                    arguments.Add(evaluate((Expr) argument));
-                } else if(argument is Statement.function)
+                    arguments.Add(evaluate((Expr)argument));
+                } else if (argument is Statement.function)
                 {
                     arguments.Add((Statement.function)argument);
                 }
@@ -361,14 +365,14 @@ namespace Lox
             if (!(callee is LoxCallable) && !(callee is Statement.function))
             {
                 throw new Exceptions.RuntimeError(call.paren, "Can only call functions and classes.");
-            }else if(callee is Statement.function)
+            } else if (callee is Statement.function)
             {
-                Statement.function staticFunction = (Statement.function) callee;
+                Statement.function staticFunction = (Statement.function)callee;
                 LoxFunction classStaticFunction = new LoxFunction(staticFunction, globals, false);
                 return classStaticFunction.call(this, arguments);
             }
             LoxCallable function = (LoxCallable)callee;
-            if(arguments.Count != function.arity())
+            if (arguments.Count != function.arity())
             {
                 throw new Exceptions.RuntimeError(call.paren, "Expected " +
                     function.arity() + " arguments but got " +
@@ -402,7 +406,7 @@ namespace Lox
             List<LoxClass> superClasses = new List<LoxClass>();
             if (classStatement.superclass.Count != 0)
             {
-                foreach(Object superClass in classStatement.superclass)
+                foreach (Object superClass in classStatement.superclass)
                 {
                     Object eval = evaluate((Expr.Variable)superClass);
                     if (!(eval is LoxClass))
@@ -418,7 +422,7 @@ namespace Lox
 
             environment.define(classStatement.name.lexeme, null, classStatement.name);
 
-            if(classStatement.superclass.Count != 0)
+            if (classStatement.superclass.Count != 0)
             {
                 environment = new Environment(environment);
                 environment.define("super", superClasses);
@@ -443,15 +447,15 @@ namespace Lox
                 }
             }
             LoxClass _class = new LoxClass(classStatement.name.lexeme, superClasses, methods);
-            foreach(Statement.function staticFunction in classStatement.staticFunctions)
+            foreach (Statement.function staticFunction in classStatement.staticFunctions)
             {
                 _class.set(staticFunction.name, staticFunction);
             }
-            foreach(LoxFunction getter in getters.Keys)
+            foreach (LoxFunction getter in getters.Keys)
             {
                 _class.set(getters[getter], getter);
             }
-            if(superClasses.Count != 0)
+            if (superClasses.Count != 0)
             {
                 environment = environment.enclosing;
             }
@@ -462,7 +466,7 @@ namespace Lox
         public object visitGetExpr(Expr.Get get)
         {
             Object _object = evaluate(get._object);
-            if(_object is LoxInstance && !(_object is LoxClass))
+            if (_object is LoxInstance && !(_object is LoxClass))
             {
                 object result = ((LoxInstance)_object).get(get.name);
                 if (result is LoxFunction)
@@ -483,7 +487,7 @@ namespace Lox
         {
             Object _object = evaluate(set._object);
 
-            if(!(_object is LoxInstance) || (_object is LoxClass))
+            if (!(_object is LoxInstance) || (_object is LoxClass))
             {
                 throw new Exceptions.RuntimeError(set.name, "Only instances have fields.");
             }
@@ -506,7 +510,7 @@ namespace Lox
             List<LoxClass> superClasses = (List<LoxClass>)environment.getAt(distance, "super");
             LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this"); //May have to find a fix for this given my implementation of getAt().
             LoxFunction method = null;
-            foreach(LoxClass superClass in superClasses)
+            foreach (LoxClass superClass in superClasses)
             {
                 method = superClass.findMethod(super.method.lexeme);
                 if (method != null) break;
@@ -532,7 +536,7 @@ namespace Lox
             if (pf.keyword.type == TokenType.PLUS_PLUS)
             {
                 value = ((double)value) + 1.0;
-            }else
+            } else
             {
                 value = ((double)value) - 1.0;
             }
@@ -572,4 +576,6 @@ namespace Lox
             return function; //If the function is lambda
         }
     }
+
+    class Null{}
 }
