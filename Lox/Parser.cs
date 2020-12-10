@@ -114,7 +114,6 @@ namespace Lox
                 }else
                 {
                     throw error(previous(), "Cannot use break statement outside of loop structure.");
-                    consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
                 }
             }
             if(match(TokenType.CONTINUE))
@@ -126,7 +125,6 @@ namespace Lox
                 }else
                 {
                     throw error(previous(), "Cannot use continue statement outside of loop structure.");
-                    consume(TokenType.SEMICOLON, "Expected ';' after continue statement.");
                 }
             }
             return expressionStatement();
@@ -260,7 +258,7 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable)
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
