@@ -113,7 +113,7 @@ namespace Lox
                     return new Statement.breakStmt(previous());
                 }else
                 {
-                    error(previous(), "Cannot use break statement outside of loop structure.");
+                    throw error(previous(), "Cannot use break statement outside of loop structure.");
                     consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
                 }
             }
@@ -125,7 +125,7 @@ namespace Lox
                     return new Statement.continueStmt(previous());
                 }else
                 {
-                    error(previous(), "Cannot use continue statement outside of loop structure.");
+                    throw error(previous(), "Cannot use continue statement outside of loop structure.");
                     consume(TokenType.SEMICOLON, "Expected ';' after continue statement.");
                 }
             }
@@ -287,7 +287,7 @@ namespace Lox
                 {
                     if (parameters.Count >= 255)
                     {
-                        error(peek(), "Can't have more than 255 parameters.");
+                        throw error(peek(), "Can't have more than 255 parameters.");
                     }
                     parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
                 } while (match(TokenType.COMMA));
@@ -329,7 +329,7 @@ namespace Lox
                     Expr.Get get = (Expr.Get)expr;
                     return new Expr.Set(get._object, get.name, value);
                 }
-                error(equals, "Invalid assignment target.");
+                throw error(equals, "Invalid assignment target.");
             }
             return expr;
         }
@@ -477,7 +477,7 @@ namespace Lox
                 {
                     if(arguments.Count >= 255)
                     {
-                        error(peek(), "Can't have more than 255 arguments.");
+                        throw error(peek(), "Can't have more than 255 arguments.");
                     }
                     if (match(TokenType.FUNC))
                     {
@@ -563,7 +563,7 @@ namespace Lox
                     {
                         if (parameters.Count >= 255)
                         {
-                            error(peek(), "Can't have more than 255 parameters.");
+                            throw error(peek(), "Can't have more than 255 parameters.");
                         }
                         parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
                     } while (match(TokenType.COMMA));
