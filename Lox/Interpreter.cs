@@ -462,7 +462,7 @@ namespace Lox
         public object visitGetExpr(Expr.Get get)
         {
             Object _object = evaluate(get._object);
-            if(_object is LoxInstance)
+            if(_object is LoxInstance && !(_object is LoxClass))
             {
                 object result = ((LoxInstance)_object).get(get.name);
                 if (result is LoxFunction)
