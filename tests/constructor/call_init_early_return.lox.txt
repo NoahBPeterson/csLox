@@ -1,0 +1,4 @@
+[line 5:16] Warning at '"nope"' Unreachable code placed after return statement.
+init
+init
+Foo instance

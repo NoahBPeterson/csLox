@@ -1,0 +1,13 @@
+14
+8
+4
+0
+True
+True
+True
+True
+0
+0
+0
+0
+4

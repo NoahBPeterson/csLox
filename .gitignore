@@ -15,3 +15,4 @@
 /Todo.md
 /bin/x64/Release
 /obj/x64/Release
+*.test

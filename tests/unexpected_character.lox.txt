@@ -1,0 +1,2 @@
+[line 3:7] Error: Unexpected character: |
+[line 3:9] Error at 'b': Expect ')' after arguments.

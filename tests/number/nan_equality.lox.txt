@@ -1,0 +1,2 @@
+Cannot divide by zero.
+[line 1]

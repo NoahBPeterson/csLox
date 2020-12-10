@@ -1,0 +1,2 @@
+[line 2:11] Error at 'arg': A variable with this name already exists in this scope.
+[line 2:11] Warning at 'arg' Variable has not been used.

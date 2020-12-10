@@ -1,0 +1,2 @@
+[line 4:15] Warning at '"bad"' Unreachable code placed after return statement.
+ok

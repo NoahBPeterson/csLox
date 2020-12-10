@@ -1,0 +1,2 @@
+The var a has already been defined.
+[line 2]

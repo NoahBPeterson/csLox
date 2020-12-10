@@ -1,0 +1,2 @@
+[line 3:17] Error at '{': Expect expression.
+[line 3:30] Error at ')': Expect ';' after expression.

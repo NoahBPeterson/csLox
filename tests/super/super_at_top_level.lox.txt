@@ -1,0 +1,2 @@
+[line 1:5] Error at 'super': Can't use 'super' outside of a class.
+[line 2:5] Error at 'super': Can't use 'super' outside of a class.

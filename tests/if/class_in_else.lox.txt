@@ -1,0 +1,1 @@
+[line 2:26] Error at 'class': Expect expression.

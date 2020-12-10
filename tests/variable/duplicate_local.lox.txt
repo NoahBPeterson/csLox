@@ -1,0 +1,2 @@
+[line 3:7] Error at 'a': A variable with this name already exists in this scope.
+[line 3:7] Warning at 'a' Variable has not been used.

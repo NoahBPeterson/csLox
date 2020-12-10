@@ -1,0 +1,4 @@
+[line 1:7] Warning at 'a' Variable has not been used.
+[line 1:10] Warning at 'b' Variable has not been used.
+Expected 2 arguments but got 1.
+[line 3]

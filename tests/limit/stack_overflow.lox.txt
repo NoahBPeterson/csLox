@@ -1,0 +1,16 @@
+[line 2:8] Warning at 'a1' Variable has not been used.
+[line 3:8] Warning at 'a2' Variable has not been used.
+[line 4:8] Warning at 'a3' Variable has not been used.
+[line 5:8] Warning at 'a4' Variable has not been used.
+[line 6:8] Warning at 'a5' Variable has not been used.
+[line 7:8] Warning at 'a6' Variable has not been used.
+[line 8:8] Warning at 'a7' Variable has not been used.
+[line 9:8] Warning at 'a8' Variable has not been used.
+[line 10:8] Warning at 'a9' Variable has not been used.
+[line 11:9] Warning at 'a10' Variable has not been used.
+[line 12:9] Warning at 'a11' Variable has not been used.
+[line 13:9] Warning at 'a12' Variable has not been used.
+[line 14:9] Warning at 'a13' Variable has not been used.
+[line 15:9] Warning at 'a14' Variable has not been used.
+[line 16:9] Warning at 'a15' Variable has not been used.
+[line 17:9] Warning at 'a16' Variable has not been used.

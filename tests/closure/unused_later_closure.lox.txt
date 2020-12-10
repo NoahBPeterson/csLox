@@ -1,0 +1,2 @@
+[line 21:17] Warning at 'returnB' Variable has not been used.
+a

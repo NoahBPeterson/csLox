@@ -1,0 +1,2 @@
+[line 3:13] Warning at '"bad"' Unreachable code placed after return statement.
+nil

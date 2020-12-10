@@ -1,0 +1,3 @@
+[line 8:7] Warning at 'a' Variable has not been used.
+outer
+outer
