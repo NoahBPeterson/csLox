@@ -258,10 +258,18 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable || expr is Expr.Get)
             {
-                consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-                return new Statement.Expression(expr);
+                if(expr is Expr.Variable || expr is Expr.Get) //Preserve REPL by making semicolon after variable access optional.
+                {
+                    if(match(TokenType.SEMICOLON))
+                        return new Statement.Expression(expr);
+                }
+                else
+                {
+                    consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+                    return new Statement.Expression(expr);
+                }
             }
             return new Statement.Print(expr);
         }
@@ -457,7 +465,7 @@ namespace Lox
         private Expr postfix()
         {
             Expr prim = call();
-            if (prim is Expr.Get || prim is Expr.Call) return prim;
+            if (prim is Expr.Call) return prim;
             if (match(TokenType.MINUS_MINUS, TokenType.PLUS_PLUS))
             {
                 Token _operator = previous();
