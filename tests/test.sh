@@ -7,7 +7,7 @@ for file in ./*.lox
 do
 	../bin/Release/Lox.exe "$file" > "$file".test
 done
-echo "" > ./testDifference.text
+echo "" > ./testDifference.txt
 for file in ./*/*.txt
 do
 	filename="$(basename $file .txt)"

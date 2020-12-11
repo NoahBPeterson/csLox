@@ -16,3 +16,4 @@
 /bin/x64/Release
 /obj/x64/Release
 *.test
+/tests/testDifference.txt
