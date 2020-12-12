@@ -31,15 +31,6 @@ namespace Lox
             return environment;
         }
 
-        Environment ancestor(string key)
-        {
-            Environment environment = this;
-            while(environment != null && !environment.contains(key) && environment.enclosing != null)
-            {
-                environment = environment.enclosing;
-            }
-            return environment;
-        }
         public void define(String name, Object value)
         {
             define(name, value, null);
@@ -61,14 +52,13 @@ namespace Lox
         public Object getAt(int distance, string name)
         {
             Object obj;
-            //ancestor(distance).values.TryGetValue(name, out obj);
-            ancestor(name).values.TryGetValue(name, out obj);
+            ancestor(distance).values.TryGetValue(name, out obj);
             return obj;
         }
 
         public void assignAt(int distance, Token name, Object value)
         {
-            Environment env = ancestor(name.lexeme);
+            Environment env = ancestor(distance);
             if (env.values.ContainsKey(name.lexeme))
             {
                 assign(name, value);
