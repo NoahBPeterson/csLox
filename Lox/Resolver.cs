@@ -280,14 +280,22 @@ namespace Lox
             currentClass = ClassType.CLASS;
             declare(classStatement.name);
             define(classStatement.name);
-
-
+            Dictionary<string, bool> superclassDuplicates = new Dictionary<string, bool>();
             if (classStatement.superclass.Count != 0)
             {
 
                 currentClass = ClassType.SUBCLASS;
                 foreach(Expr.Variable superClass in classStatement.superclass)
                 {
+                    superclassDuplicates.TryGetValue(superClass.name.lexeme, out bool value);
+                    if (value)
+                    {
+                        Lox.error(superClass.name, "A class can't inherit from the same class twice.");
+                    }
+                    else
+                    {
+                        superclassDuplicates[superClass.name.lexeme] = true;
+                    }
                     if (classStatement.name.lexeme.Equals(superClass.name.lexeme))
                     {
                         Lox.error(superClass.name, "A class can't inherit from itself.");
