@@ -1,0 +1,25 @@
+class A {
+	init()
+	{
+	print "A!";
+	}
+} 
+
+class B { 
+	init() 
+	{
+		print "B!";
+	}
+
+} 
+
+class C < A, B {
+	init() 
+	{ 
+		super.init(); 
+	}
+} 
+
+class D < C, C {} // [line 1:14] Error at 'C': A class can't inherit from the same class twice.
+
+C(); //Error: Found the 'init' method in multiple superclasses.

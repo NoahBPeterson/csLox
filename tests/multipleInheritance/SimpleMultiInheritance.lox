@@ -1,0 +1,25 @@
+class A {
+	init()
+	{
+	print "A!";
+	}
+} 
+
+class B { 
+	b() 
+	{
+		print "B!";
+	}
+
+} 
+
+class C < A, B {
+	init() 
+	{ 
+		super.init(); 
+	}
+} 
+
+C(); //"A!" 
+
+C().b(); //"A!" "B!"

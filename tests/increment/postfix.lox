@@ -1,0 +1,7 @@
+var a = 10;
+var b = a++;
+print a; //11
+print b; //10
+var c = a--;
+print a; //10
+print c; //11

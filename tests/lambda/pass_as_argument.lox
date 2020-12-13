@@ -1,0 +1,11 @@
+fun accumulate(fn)
+{
+	var a = 0;
+	for(var i = 0; i < 10; i++)
+	{
+		a= a + fn(i);
+	}
+	return a;
+}
+
+print accumulate(fun (x) { return x*x; } ); //285
