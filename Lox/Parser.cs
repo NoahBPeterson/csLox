@@ -478,14 +478,7 @@ namespace Lox
                     {
                         throw error(peek(), "Can't have more than 255 arguments.");
                     }
-                    if (match(TokenType.FUNC))
-                    {
-                        arguments.Add(function("lambda"));
-                    }
-                    else
-                    {
-                        arguments.Add(expression());
-                    }
+                    arguments.Add(expression());
                 } while (match(TokenType.COMMA));
             }
 
@@ -554,9 +547,8 @@ namespace Lox
             {
                 Token name = previous();
 
-                if(peek().Equals(TokenType.LEFT_PAREN))
+                if(match(TokenType.LEFT_PAREN))
                 {
-                    consume(TokenType.LEFT_PAREN, "Expect '(' after function declaration.");
                     List<Token> parameters = new List<Token>();
                     if (!check(TokenType.RIGHT_PAREN))
                     {
@@ -573,6 +565,9 @@ namespace Lox
                     consume(TokenType.LEFT_BRACE, "Expect '{' before function body.");
                     List<Statement> body = block();
                     return new Expr.Lambda(name, parameters, body);
+                }else
+                {
+                    throw error(peek(), "Expect '(' after function declaration.");
                 }
 
             }
