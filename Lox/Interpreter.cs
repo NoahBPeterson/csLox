@@ -506,14 +506,18 @@ namespace Lox
         {
             int distance = -1;
             locals.TryGetValue(super, out distance);
-            //if (distance != -1)
             List<LoxClass> superClasses = (List<LoxClass>)environment.getAt(distance, "super");
-            LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this"); //May have to find a fix for this given my implementation of getAt().
+            LoxInstance _object = (LoxInstance)environment.getAt(distance - 1, "this");
             LoxFunction method = null;
+            LoxClass foundInClass = null;
+
             foreach (LoxClass superClass in superClasses)
             {
-                method = superClass.findMethod(super.method.lexeme);
-                if (method != null) break;
+                LoxFunction methodFind = superClass.findMethod(super.method.lexeme);
+                if (method != null && methodFind != null) 
+                    throw new Exceptions.RuntimeError(super.method, "Error: Found '"+super.method.lexeme+"' in "+foundInClass.name+" and "+superClass.name+".");
+                method = methodFind;
+                foundInClass = superClass;
             }
             if (method == null)
             {
