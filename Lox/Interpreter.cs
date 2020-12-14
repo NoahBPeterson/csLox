@@ -520,10 +520,14 @@ namespace Lox
             foreach (LoxClass superClass in superClasses)
             {
                 LoxFunction methodFind = superClass.findMethod(super.method.lexeme);
-                if (method != null && methodFind != null)
-                    throw new Exceptions.RuntimeError(super.method, "Error: Found '" + super.method.lexeme + "' in " + foundInClass.name + " and " + superClass.name + ".");
-                method = methodFind;
+                if(methodFind != null)
+                {
+                    if (method != null)
+                        throw new Exceptions.RuntimeError(super.method, "Error: Found '" + super.method.lexeme + "' in " + foundInClass.name + " and " + superClass.name + ".");
+                    method = methodFind;
                     foundInClass = superClass;
+                }
+                
                 }
             if (method == null)
             {
