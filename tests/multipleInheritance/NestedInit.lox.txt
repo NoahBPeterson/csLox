@@ -1,1 +1,2 @@
-A!
+Error: Tried to call a method from subclass D which exists in superclass B and superclass C.
+[line -1]
