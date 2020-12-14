@@ -1,2 +1,0 @@
-[line 53:9] Warning at 'h' Variable has not been used.
-[line 26:7] Warning at 'g' Variable has not been used.
