@@ -23,4 +23,4 @@ Todo: ☐ ☑ ☒
 
 ☑ Classes
 
-☒ Inheritance
+☑ Inheritance
