@@ -26,7 +26,7 @@ namespace Lox
         public List<Statement> parse()
         {
             List<Statement> statements = new List<Statement>();
-            while(!isAtEnd())
+            while (!isAtEnd())
             {
                 statements.Add(declaration());
             }
@@ -80,9 +80,9 @@ namespace Lox
 
             List<Statement.function> methods = new List<Statement.function>();
             List<Statement.function> staticFunctions = new List<Statement.function>();
-            while(!check(TokenType.RIGHT_BRACE) && !isAtEnd())
+            while (!check(TokenType.RIGHT_BRACE) && !isAtEnd())
             {
-                if(match(TokenType.CLASS))
+                if (match(TokenType.CLASS))
                 {
                     staticFunctions.Add(function("static"));
                 }
@@ -98,31 +98,33 @@ namespace Lox
 
         private Statement statement()
         {
-            if(match(TokenType.PRINT)) return printStatement();
-            if(match(TokenType.LEFT_BRACE)) return new Statement.Block(block());
-            if(match(TokenType.IF)) return ifStatement();
-            if(match(TokenType.RETURN)) return returnStatement();
-            if(match(TokenType.DO)) return doWhileStatement();
-            if(match(TokenType.WHILE)) return whileStatement();
-            if(match(TokenType.FOR)) return forStatement();
+            if (match(TokenType.PRINT)) return printStatement();
+            if (match(TokenType.LEFT_BRACE)) return new Statement.Block(block());
+            if (match(TokenType.IF)) return ifStatement();
+            if (match(TokenType.RETURN)) return returnStatement();
+            if (match(TokenType.DO)) return doWhileStatement();
+            if (match(TokenType.WHILE)) return whileStatement();
+            if (match(TokenType.FOR)) return forStatement();
             if (match(TokenType.BREAK))
             {
-                if(parsingLoop)
+                if (parsingLoop)
                 {
                     consume(TokenType.SEMICOLON, "Expected ';' after break statement.");
                     return new Statement.breakStmt(previous());
-                }else
+                }
+                else
                 {
                     throw error(previous(), "Cannot use break statement outside of loop structure.");
                 }
             }
-            if(match(TokenType.CONTINUE))
+            if (match(TokenType.CONTINUE))
             {
-                if(parsingLoop)
+                if (parsingLoop)
                 {
                     consume(TokenType.SEMICOLON, "Expected ';' after continue statement.");
                     return new Statement.continueStmt(previous());
-                }else
+                }
+                else
                 {
                     throw error(previous(), "Cannot use continue statement outside of loop structure.");
                 }
@@ -134,26 +136,28 @@ namespace Lox
         {
             consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
             Statement initializer;
-            if(match(TokenType.SEMICOLON))
+            if (match(TokenType.SEMICOLON))
             {
                 initializer = null;
-            } else if(match(TokenType.VAR))
+            }
+            else if (match(TokenType.VAR))
             {
                 initializer = varDeclaration();
-            } else
+            }
+            else
             {
                 initializer = expressionStatement();
             }
 
             Expr condition = null;
-            if(!check(TokenType.SEMICOLON))
+            if (!check(TokenType.SEMICOLON))
             {
                 condition = expression();
             }
             consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
 
             Expr increment = null;
-            if(!check(TokenType.RIGHT_PAREN))
+            if (!check(TokenType.RIGHT_PAREN))
             {
                 increment = expression();
             }
@@ -161,7 +165,7 @@ namespace Lox
             parsingLoop = true;
             Statement body = statement();
             parsingLoop = false;
-            if(increment != null)
+            if (increment != null)
             {
                 body = new Statement.Block(new List<Statement> { body, new Statement.Expression(increment) });
             }
@@ -169,7 +173,7 @@ namespace Lox
             if (condition == null) condition = new Expr.Literal(true, previous());
             body = new Statement.whileStmt(condition, body, false);
 
-            if(initializer != null)
+            if (initializer != null)
             {
                 body = new Statement.Block(new List<Statement> { initializer, body });
             }
@@ -185,7 +189,7 @@ namespace Lox
 
             Statement thenBranch = statement();
             Statement elseBranch = null;
-            if(match(TokenType.ELSE))
+            if (match(TokenType.ELSE))
             {
                 elseBranch = statement();
             }
@@ -204,7 +208,7 @@ namespace Lox
         {
             Token keyword = previous();
             Expr value = null;
-            if(!check(TokenType.SEMICOLON))
+            if (!check(TokenType.SEMICOLON))
             {
                 value = expression();
             }
@@ -217,7 +221,7 @@ namespace Lox
             Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
 
             Expr initializer = null;
-            if(match(TokenType.EQUALS))
+            if (match(TokenType.EQUALS))
             {
                 initializer = expression();
             }
@@ -271,7 +275,7 @@ namespace Lox
         {
             Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
 
-            if(kind.Equals("method") && match(TokenType.LEFT_BRACE))
+            if (kind.Equals("method") && match(TokenType.LEFT_BRACE))
             {
                 List<Statement> bodyStmts = block();
                 List<Token> sentinelParam = new List<Token>();
@@ -280,7 +284,7 @@ namespace Lox
             }
             consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
             List<Token> parameters = new List<Token>();
-            if(!check(TokenType.RIGHT_PAREN))
+            if (!check(TokenType.RIGHT_PAREN))
             {
                 do
                 {
@@ -301,7 +305,7 @@ namespace Lox
         {
             List<Statement> statements = new List<Statement>();
 
-            while(!check(TokenType.RIGHT_BRACE) && !isAtEnd())
+            while (!check(TokenType.RIGHT_BRACE) && !isAtEnd())
             {
                 statements.Add(declaration());
             }
@@ -312,24 +316,45 @@ namespace Lox
 
         private Expr assignment()
         {
-            Expr expr = or();
+            Expr expr = ternaryExpression();
 
-            if(match(TokenType.EQUALS))
+            if (match(TokenType.EQUALS))
             {
                 Token equals = previous();
                 Expr value = assignment();
 
-                if(expr.GetType() == typeof(Expr.Variable))
+                if (expr.GetType() == typeof(Expr.Variable))
                 {
                     Token name = ((Expr.Variable)expr).name;
                     return new Expr.AssignExpr(name, value);
-                }else if (expr is Expr.Get)
+                }
+                else if (expr is Expr.Get)
                 {
                     Expr.Get get = (Expr.Get)expr;
                     return new Expr.Set(get._object, get.name, value);
                 }
                 throw error(equals, "Invalid assignment target.");
             }
+            return expr;
+        }
+
+        private Expr ternaryExpression()
+        {
+            Expr expr = or(); //Comparison expression
+            Expr trueExpression; //Result if comparison is true
+
+            if (match(TokenType.TERNARY_QUESTION))
+            {
+                trueExpression = equality();
+                if (match(TokenType.TERNARY_COLON))
+                {
+                    Expr falseExpression = equality(); //Result if comparison is false.
+                    Expr temp = expr;
+                    expr = new Expr.TernaryExpr(temp, trueExpression, falseExpression);
+
+                }
+            }
+
             return expr;
         }
 
@@ -349,33 +374,13 @@ namespace Lox
 
         private Expr and()
         {
-            Expr expr = ternaryExpression();
+            Expr expr = equality();
 
-            while(match(TokenType.AND))
+            while (match(TokenType.AND))
             {
                 Token _operator = previous();
                 Expr right = ternaryExpression();
                 expr = new Expr.logicalExpr(expr, _operator, right);
-            }
-
-            return expr;
-        }
-
-        private Expr ternaryExpression()
-        {
-            Expr expr = equality(); //Comparison expression
-            Expr trueExpression; //Result if comparison is true
-
-            if (match(TokenType.TERNARY_QUESTION))
-            {
-                trueExpression = equality();
-                if(match(TokenType.TERNARY_COLON))
-                {
-                    Expr falseExpression = equality(); //Result if comparison is false.
-                    Expr temp = expr;
-                    expr = new Expr.TernaryExpr(temp, trueExpression, falseExpression);
-
-                }
             }
 
             return expr;
@@ -411,7 +416,7 @@ namespace Lox
         {
             Expr expr = factor();
 
-            while(match(TokenType.MINUS, TokenType.PLUS))
+            while (match(TokenType.MINUS, TokenType.PLUS))
             {
                 Token _operator = previous();
                 Expr right = factor();
@@ -423,8 +428,8 @@ namespace Lox
         private Expr factor()
         {
             Expr expr = unary();
-            
-            while(match(TokenType.FORWARD_SLASH, TokenType.ASTERISK))
+
+            while (match(TokenType.FORWARD_SLASH, TokenType.ASTERISK))
             {
                 Token _operator = previous();
                 Expr right = unary();
@@ -435,7 +440,7 @@ namespace Lox
 
         private Expr unary()
         {
-            if(match(TokenType.EXCLAMATION, TokenType.MINUS))
+            if (match(TokenType.EXCLAMATION, TokenType.MINUS))
             {
                 Token _operator = previous();
                 Expr right = unary();
@@ -470,11 +475,11 @@ namespace Lox
         private Expr finishCall(Expr callee)
         {
             List<Object> arguments = new List<Object>();
-            if(!check(TokenType.RIGHT_PAREN))
+            if (!check(TokenType.RIGHT_PAREN))
             {
                 do
                 {
-                    if(arguments.Count >= 255)
+                    if (arguments.Count >= 255)
                     {
                         throw error(peek(), "Can't have more than 255 arguments.");
                     }
@@ -491,12 +496,13 @@ namespace Lox
         {
             Expr expr = primary();
 
-            while(true)
+            while (true)
             {
-                if(match(TokenType.LEFT_PAREN))
+                if (match(TokenType.LEFT_PAREN))
                 {
                     expr = finishCall(expr);
-                }else if(match(TokenType.DOT))
+                }
+                else if (match(TokenType.DOT))
                 {
                     Token name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
                     expr = new Expr.Get(expr, name);
@@ -514,21 +520,21 @@ namespace Lox
             if (match(TokenType.FALSE)) return new Expr.Literal(false, previous());
             if (match(TokenType.TRUE)) return new Expr.Literal(true, previous());
             if (match(TokenType.NIL)) return new Expr.Literal(null, previous());
-            
 
-            if(match(TokenType.NUMBER, TokenType.STRING))
+
+            if (match(TokenType.NUMBER, TokenType.STRING))
             {
                 return new Expr.Literal(previous().literal, previous());
             }
 
-            if(match(TokenType.LEFT_PAREN))
+            if (match(TokenType.LEFT_PAREN))
             {
                 Expr expr = expression();
                 consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
                 return new Expr.Grouping(expr);
             }
 
-            if(match(TokenType.SUPER_CLASS))
+            if (match(TokenType.SUPER_CLASS))
             {
                 Token keyword = previous();
                 consume(TokenType.DOT, "Expect '.' after 'super'.");
@@ -538,16 +544,16 @@ namespace Lox
 
             if (match(TokenType.THIS_OBJECT)) return new Expr.This(previous());
 
-            if(match(TokenType.IDENTIFIER))
+            if (match(TokenType.IDENTIFIER))
             {
                 return new Expr.Variable(previous());
             }
 
-            if(match(TokenType.FUNC))
+            if (match(TokenType.FUNC))
             {
                 Token name = previous();
 
-                if(match(TokenType.LEFT_PAREN))
+                if (match(TokenType.LEFT_PAREN))
                 {
                     List<Token> parameters = new List<Token>();
                     if (!check(TokenType.RIGHT_PAREN))
@@ -565,7 +571,8 @@ namespace Lox
                     consume(TokenType.LEFT_BRACE, "Expect '{' before function body.");
                     List<Statement> body = block();
                     return new Expr.Lambda(name, parameters, body);
-                }else
+                }
+                else
                 {
                     throw error(peek(), "Expect '(' after function declaration.");
                 }
@@ -588,7 +595,7 @@ namespace Lox
         {
             foreach (TokenType type in types)
             {
-                if(check(type))
+                if (check(type))
                 {
                     advance();
                     return true;
@@ -641,7 +648,7 @@ namespace Lox
         {
             advance();
 
-            while(!isAtEnd())
+            while (!isAtEnd())
             {
                 if (previous().type == TokenType.SEMICOLON) return;
 

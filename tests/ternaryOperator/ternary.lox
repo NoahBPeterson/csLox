@@ -1,0 +1,5 @@
+print (1 < 2) ? true : false; // true
+print (1 > 2) ? true : false; // false
+
+print (1 < 2) ? true : false and true; //true
+print (1 > 2) ? true : false or true; //true
