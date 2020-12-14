@@ -443,7 +443,13 @@ namespace Lox
                 else
                 {
                     LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.Equals("init"));
-                    methods.Add(method.name.lexeme, function);
+                    if (!methods.ContainsKey(method.name.lexeme))
+                    {
+                        methods.Add(method.name.lexeme, function);
+                    }else
+                    {
+                        throw new Exceptions.RuntimeError(method.name, "Cannot have two functions with the same name in the same class.");
+                    }
                 }
             }
             LoxClass _class = new LoxClass(classStatement.name.lexeme, superClasses, methods);
@@ -514,11 +520,11 @@ namespace Lox
             foreach (LoxClass superClass in superClasses)
             {
                 LoxFunction methodFind = superClass.findMethod(super.method.lexeme);
-                if (method != null && methodFind != null) 
-                    throw new Exceptions.RuntimeError(super.method, "Error: Found '"+super.method.lexeme+"' in "+foundInClass.name+" and "+superClass.name+".");
+                if (method != null && methodFind != null)
+                    throw new Exceptions.RuntimeError(super.method, "Error: Found '" + super.method.lexeme + "' in " + foundInClass.name + " and " + superClass.name + ".");
                 method = methodFind;
-                foundInClass = superClass;
-            }
+                    foundInClass = superClass;
+                }
             if (method == null)
             {
                 throw new Exceptions.RuntimeError(super.method, "Undefined property '" + super.method.lexeme + "'.");
@@ -544,9 +550,13 @@ namespace Lox
             {
                 value = ((double)value) - 1.0;
             }
-            if (locals.TryGetValue(pf, out int distance))
+            if (locals.TryGetValue(pf.expr, out int distance))
             {
                 environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value); //Assign value after change.
+            }
+            else
+            {
+                globals.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)value);
             }
             return value;
         }
@@ -565,9 +575,13 @@ namespace Lox
             {
                 assignValue = ((double)value) - 1.0;
             }
-            if (locals.TryGetValue(pf, out int distance))
+            
+            if(locals.TryGetValue(pf.expr, out int distance))
             {
                 environment.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)assignValue);
+            }else
+            {
+                globals.assignAt(distance, new HelperFunctions.GetToken().evaluate(pf.expr), (double)assignValue);
             }
 
             return value;

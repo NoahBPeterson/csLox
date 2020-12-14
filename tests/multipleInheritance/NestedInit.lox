@@ -1,0 +1,16 @@
+class A { 
+	init() {	
+	print "A!"; 
+	}
+}
+class B < A {}
+
+class C { 
+	init() { 
+		print "C!";
+	}
+} 
+
+class D < B, C {}
+
+D(); //Error: Found the 'init' method in multiple superclasses.
