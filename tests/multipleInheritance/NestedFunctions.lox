@@ -1,0 +1,32 @@
+class A {
+	init()
+	{
+		print "A!";
+	}
+	b()
+	{
+		print "a";
+	}
+} 
+
+class B { 
+	b() 
+	{
+		print "B!";
+	}
+
+} 
+
+class C < B, A {
+	c() 
+	{ 
+		super.b(); 
+	}
+}
+
+class D < A, C {} 
+
+C().c(); //"B!"
+
+
+C().b(); //Error: Found 'b' in B and A.

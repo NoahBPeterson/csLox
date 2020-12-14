@@ -25,12 +25,28 @@ namespace Lox
             {
                 return methods[name];
             }
+            LoxFunction method = null;
+            LoxClass superClassFound = null;
             foreach(LoxClass superClass in superclasses)
             {
-                if(superClass.findMethod(name) != null) 
-                    return superClass.findMethod(name);
+                if(superClass.findMethod(name) != null)
+                {
+                    if (method == null)
+                    {
+                        method = superClass.findMethod(name);
+                        superClassFound = superClass;
+                    }
+                    else
+                    {
+                        HelperFunctions.GetToken getToken = new HelperFunctions.GetToken();
+                        throw new Exceptions.RuntimeError(new Token(Token.TokenType.CLASS, "", superClass, -1, -1),
+                            "Error: Tried to call a method from subclass "+this.ToString()+" which exists in superclass " + superClassFound.ToString() +
+                            " and superclass " + superClass.ToString() + ".");
+                    }
+                }                    
+                    
             }
-            return null;
+            return method;
         }
 
         public int arity()
