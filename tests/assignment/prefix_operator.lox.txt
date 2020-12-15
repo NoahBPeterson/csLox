@@ -1,1 +1,1 @@
-[line 2:4] Error at '=': Invalid assignment target.
+[line 2:4] Error at '=': Invalid assignment target: Lox.Expr+UnaryExpr

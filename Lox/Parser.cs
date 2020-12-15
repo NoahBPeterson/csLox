@@ -323,7 +323,7 @@ namespace Lox
                 Token equals = previous();
                 Expr value = assignment();
 
-                if (expr.GetType() == typeof(Expr.Variable))
+                if (expr is Expr.Variable)
                 {
                     Token name = ((Expr.Variable)expr).name;
                     return new Expr.AssignExpr(name, value);
@@ -333,7 +333,7 @@ namespace Lox
                     Expr.Get get = (Expr.Get)expr;
                     return new Expr.Set(get._object, get.name, value, get.isCascading);
                 }
-                throw error(equals, "Invalid assignment target.");
+                throw error(equals, "Invalid assignment target: " + expr.GetType());
             }
             return expr;
         }
