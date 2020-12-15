@@ -132,6 +132,9 @@ namespace Lox
                 case TokenType.ASTERISK:
                     checkNumberOperand(binaryExpr.operatorToken, left, right);
                     return (double)left * (double)right;
+                case TokenType.QUESTION_QUESTION:
+                    if (left is null || left is Null) return right;
+                    return left;
             }
 
             return null;
@@ -378,7 +381,23 @@ namespace Lox
                     function.arity() + " arguments but got " +
                     arguments.Count + ".");
             }
-            return function.call(this, arguments);
+            object callFunction = function.call(this, arguments);
+            if(call.callee is Expr.Get)
+            {
+                Expr.Get cascade = ((Expr.Get)call.callee);
+                if(cascade.isCascading)
+                {
+                    return evaluate(cascade._object);
+                }
+            }else if(call.callee is Expr.Set)
+            {
+                Expr.Set cascade = ((Expr.Set)call.callee);
+                if (cascade.isCascading)
+                {
+                    return evaluate(cascade._object);
+                }
+            }
+            return callFunction;
         }
 
         public object visitFunction(Statement.function func)
@@ -479,9 +498,10 @@ namespace Lox
                 {
                     if (((LoxFunction)result).isGetter())
                     {
-                        return ((LoxFunction)result).call(this, null);
+                        result = ((LoxFunction)result).call(this, null);
                     }
                 }
+
 
                 return result;
             }

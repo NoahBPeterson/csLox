@@ -331,7 +331,7 @@ namespace Lox
                 else if (expr is Expr.Get)
                 {
                     Expr.Get get = (Expr.Get)expr;
-                    return new Expr.Set(get._object, get.name, value);
+                    return new Expr.Set(get._object, get.name, value, get.isCascading);
                 }
                 throw error(equals, "Invalid assignment target.");
             }
@@ -340,19 +340,33 @@ namespace Lox
 
         private Expr ternaryExpression()
         {
-            Expr expr = or(); //Comparison expression
+            Expr expr = isNull(); //Comparison expression
             Expr trueExpression; //Result if comparison is true
 
             if (match(TokenType.TERNARY_QUESTION))
             {
-                trueExpression = equality();
+                trueExpression = isNull();
                 if (match(TokenType.TERNARY_COLON))
                 {
-                    Expr falseExpression = equality(); //Result if comparison is false.
+                    Expr falseExpression = isNull(); //Result if comparison is false.
                     Expr temp = expr;
                     expr = new Expr.TernaryExpr(temp, trueExpression, falseExpression);
 
                 }
+            }
+
+            return expr;
+        }
+
+        private Expr isNull()
+        {
+            Expr expr = or();
+
+            if(match(TokenType.QUESTION_QUESTION))
+            {
+                Token qq = previous();
+                Expr right = ternaryExpression();
+                expr = new Expr.BinaryExpr(expr, qq, right);
             }
 
             return expr;
@@ -505,7 +519,18 @@ namespace Lox
                 else if (match(TokenType.DOT))
                 {
                     Token name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
-                    expr = new Expr.Get(expr, name);
+                    expr = new Expr.Get(expr, name, false);
+                }else if (match(TokenType.QUESTION_DOT))
+                {
+                    Token nil = new Token(TokenType.NIL, "nil", null, -1, -1);
+                    expr = new Expr.TernaryExpr(
+                        new Expr.BinaryExpr(expr, new Token(TokenType.EXCLAMATION_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
+                        new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false), // :
+                        new Expr.Literal(null, nil));
+                }else if (match(TokenType.DOT_DOT))
+                {
+                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after '..'.");
+                    expr = new Expr.Get(expr, name, true);
                 }
                 else
                 {

@@ -72,7 +72,7 @@ namespace Lox
                 case '{': addToken(TokenType.LEFT_BRACE); break;
                 case '}': addToken(TokenType.RIGHT_BRACE); break;
                 case ',': addToken(TokenType.COMMA); break;
-                case '.': addToken(TokenType.DOT); break;
+                case '.': addToken(Match('.') ? TokenType.DOT_DOT : TokenType.DOT); break;
                 case '-': addToken(Match('-') ? TokenType.MINUS_MINUS : TokenType.MINUS); break;
                 case '+': addToken(Match('+') ? TokenType.PLUS_PLUS : TokenType.PLUS); break;
                 case ';': addToken(TokenType.SEMICOLON); break;
@@ -81,7 +81,10 @@ namespace Lox
                 case '=': addToken(Match('=') ? TokenType.EQUALS_EQUALS : TokenType.EQUALS); break;
                 case '<': addToken(Match('=') ? TokenType.LESS_THAN_EQUALS : TokenType.LESS_THAN); break;
                 case '>': addToken(Match('=') ? TokenType.GREATER_THAN_EQUALS : TokenType.GREATER_THAN); break;
-                case '?': addToken(TokenType.TERNARY_QUESTION); break;
+                case '?': 
+                    addToken(Match('?') ? TokenType.QUESTION_QUESTION 
+                        : (Match('.') ? TokenType.QUESTION_DOT : TokenType.TERNARY_QUESTION));
+                    break;
                 case ':': addToken(TokenType.TERNARY_COLON); break;
                 case '/':
                     if (Match('/'))

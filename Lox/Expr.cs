@@ -171,11 +171,13 @@ namespace Lox
         {
             public readonly Token name;
             public readonly Expr _object;
+            public readonly bool isCascading;
 
-            public Get(Expr e, Token n)
+            public Get(Expr e, Token n, bool i)
             {
                 name = n;
                 _object = e;
+                isCascading = i;
             }
 
             public override T accept<T>(Visitor<T> visitor)
@@ -189,12 +191,14 @@ namespace Lox
             public readonly Expr _object;
             public readonly Token name;
             public readonly Expr value;
+            public readonly bool isCascading;
 
-            public Set(Expr o, Token n, Expr v)
+            public Set(Expr o, Token n, Expr v, bool i)
             {
                 _object = o;
                 name = n;
                 value = v;
+                isCascading = i;
             }
 
             public override T accept<T>(Visitor<T> visitor)
