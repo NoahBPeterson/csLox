@@ -1,2 +1,2 @@
 Undefined property 'bar'.
-[line 4]
+[line 4:7]

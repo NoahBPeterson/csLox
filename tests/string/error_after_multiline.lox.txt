@@ -1,2 +1,2 @@
 Undefined variable 'err'.
-[line 7]
+[line 7:3]

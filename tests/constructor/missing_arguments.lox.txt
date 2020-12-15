@@ -1,4 +1,4 @@
 [line 2:8] Warning at 'a' Variable has not been used.
 [line 2:11] Warning at 'b' Variable has not been used.
 Expected 2 arguments but got 1.
-[line 5]
+[line 5:16]

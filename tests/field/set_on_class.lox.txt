@@ -1,2 +1,2 @@
 Only instances have fields.
-[line 2]
+[line 2:7]

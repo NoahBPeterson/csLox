@@ -128,7 +128,17 @@ namespace Lox
 
         public static void runtimeError(Exceptions.RuntimeError error)
         {
-            Console.WriteLine(error.Message + "\n[line " + error.token.line + "]");
+            string err = error.Message;
+            if (error.token.line != -1)
+            {
+                err += "\n[line " + error.token.line;
+                if(error.token.characters != -1)
+                {
+                    err += ":" + error.token.characters;
+                }
+                err += "]";
+            }
+            Console.WriteLine(err);
             hadRuntimeError = true;
         }
     }

@@ -1,2 +1,2 @@
 Superclass must be a class.
-[line 3]
+[line 3:20]

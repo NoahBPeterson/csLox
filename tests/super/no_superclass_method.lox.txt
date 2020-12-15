@@ -1,2 +1,2 @@
 Undefined property 'doesNotExist'.
-[line 5]
+[line 5:22]

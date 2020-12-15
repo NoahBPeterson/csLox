@@ -1,2 +1,2 @@
 Undefined variable 'notDefined'.
-[line 2]
+[line 2:18]

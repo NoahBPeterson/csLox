@@ -1,2 +1,2 @@
 The var a has already been defined.
-[line 2]
+[line 2:5]

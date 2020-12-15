@@ -44,7 +44,7 @@ namespace Lox
                 return;
             }
             if(token == null)
-                throw new Exceptions.RuntimeError(new Token(Token.TokenType.VAR, name, value, 0, -1), "The var "+name+" has already been defined.");
+                throw new Exceptions.RuntimeError(new Token(Token.TokenType.VAR, name, value, -1, -1), "The var "+name+" has already been defined.");
             throw new Exceptions.RuntimeError(token, "The var " + name + " has already been defined.");
 
         }
