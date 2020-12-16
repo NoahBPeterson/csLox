@@ -527,10 +527,6 @@ namespace Lox
                         new Expr.BinaryExpr(expr, new Token(TokenType.EXCLAMATION_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
                         new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false), // :
                         new Expr.Literal(null, nil));
-                }else if (match(TokenType.DOT_DOT))
-                {
-                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after '..'.");
-                    expr = new Expr.Get(expr, name, true);
                 }
                 else
                 {
