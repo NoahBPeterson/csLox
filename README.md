@@ -36,7 +36,7 @@ Everything that is not 'nil' or a 'false' value is true.
 Highest to Lowest
 ```
 Name            Operator        Associativity
-Call            a()             Left-to-right
+Call            a(), a., a?.    Left-to-right
 postfix         a++, a--        Left-to-right
 prefix          ++a, --a        Right-to-left
 unary           !a, -a          Right-to-left
@@ -46,6 +46,7 @@ comparison      >, >=, <, <=    Left-to-right
 equality        !=, ==          Left-to-right
 and             and             Left-to-right
 or              or              Left-to-right
+isNull          ??              Left-to-right
 ternary         a?b:c           Right-to-left
 assignment      =               Right-to-left
 comma           ,               Left-to-right
