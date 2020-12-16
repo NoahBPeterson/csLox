@@ -30,7 +30,6 @@ Everything that is not 'nil' or a 'false' value is true.
  - Warnings issued for unused or uninitialized variables, and unreachable code
  - Increment and decrement operators `++, --`
  - Nullcheck operators `??, ?.`
- - Cascading operator `..`
  
 
 #### Operator Precedence
