@@ -17,3 +17,5 @@
 /obj/x64/Release
 *.test
 /tests/testDifference.txt
+/obj/x64/Debug/net5.0
+/obj

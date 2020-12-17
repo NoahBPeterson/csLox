@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lox", "Lox.csproj", "{371E288B-FB53-4113-A2E9-7104AD0B76C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lox", "Lox.csproj", "{371E288B-FB53-4113-A2E9-7104AD0B76C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{913F1108-DDF9-4F4A-90FE-C254E6CE98AC}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,12 +12,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x86.ActiveCfg = Debug|x86
-		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x86.Build.0 = Debug|x86
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x64.ActiveCfg = Release|x64
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x64.Build.0 = Release|x64
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Release|x64.ActiveCfg = Release|x64
+		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Release|x64.Build.0 = Release|x64
 		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Release|x86.ActiveCfg = Release|x86
 		{371E288B-FB53-4113-A2E9-7104AD0B76C3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
