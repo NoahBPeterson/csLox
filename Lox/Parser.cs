@@ -316,7 +316,7 @@ namespace Lox
 
         private Expr assignment()
         {
-            Expr expr = ternaryExpression();
+            Expr expr = cascade();
 
             if (match(TokenType.EQUALS))
             {
@@ -335,6 +335,19 @@ namespace Lox
                 }
                 throw error(equals, "Invalid assignment target: " + expr.GetType());
             }
+            return expr;
+        }
+
+        private Expr cascade()
+        {
+            Expr expr = ternaryExpression();
+
+            if(match(TokenType.DOT_DOT))
+            {
+                Expr.Lambda cascadeFunction = null; //Token name, List<Token> params, List<Statement> body
+                Token name = consume(TokenType.IDENTIFIER, "Expect identifier after '..'.");
+            }
+
             return expr;
         }
 

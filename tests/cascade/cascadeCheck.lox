@@ -1,0 +1,9 @@
+class foo { init() {this.radius = 10;} rad(var1) {this.radius = var1;} double(){this.radius = this.radius*2;}}
+
+var f = foo();
+
+print f.radius; //10
+
+f..double()..double();
+
+print f.radius; //80
