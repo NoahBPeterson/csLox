@@ -46,6 +46,9 @@ namespace Lox
                     timeoutThread.Start(timeToLive);
 
                 runFile(args[0]);
+            }else
+            {
+                runPrompt();
             }
         }
 
