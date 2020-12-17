@@ -2,21 +2,14 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/bin/Debug
-/.vs/Lox/v15
-/obj/x86/Debug
 /.vs
 /.editorconfig
-/obj/x86/Release
+/obj/
 /packages/System.Collections.NonGeneric.4.3.0
 /packages.config
 /app.config
-/bin/Release
 /Todo.md
-/bin/x64/Release
-/obj/x64/Release
+/bin/
 *.test
 /tests/testDifference.txt
-/obj/x64/Debug/net5.0
-/obj
-/bin/x64/Debug/net5.0
+/Properties
