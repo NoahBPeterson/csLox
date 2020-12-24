@@ -17,7 +17,7 @@ namespace Lox
         private List<Token> tokens;
         private int current = 0;
         private bool parsingLoop = false;
-
+        private bool inBlock = false;
         public Parser(List<Token> tokens)
         {
             this.tokens = tokens;
@@ -262,13 +262,17 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable || expr is Expr.Literal || expr is Expr.Super || expr is Expr.This) //Take out Literal
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
             }
-            match(TokenType.SEMICOLON);
-            return new Statement.Print(expr);
+            if (!inBlock)
+            {
+                match(TokenType.SEMICOLON);
+                return new Statement.Print(expr);
+            }
+            throw error(previous(), "Cannot use REPL inside a body."+expr.GetType());
         }
 
         private Statement.function function(String kind)
@@ -305,10 +309,13 @@ namespace Lox
         {
             List<Statement> statements = new List<Statement>();
 
+            bool previousBlock = inBlock;
+            inBlock = true;
             while (!check(TokenType.RIGHT_BRACE) && !isAtEnd())
             {
                 statements.Add(declaration());
             }
+            inBlock = previousBlock;
 
             consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
             return statements;
