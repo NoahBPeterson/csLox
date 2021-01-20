@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Lox</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
+    <StartupObject>Lox.Lox</StartupObject>
   </PropertyGroup>
 
 </Project>

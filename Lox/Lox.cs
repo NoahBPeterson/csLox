@@ -67,7 +67,7 @@ namespace Lox
                 {
                     System.Environment.Exit(70);
                 }
-
+                System.Environment.Exit(0);
             }
         }
 
