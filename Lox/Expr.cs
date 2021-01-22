@@ -16,6 +16,7 @@ namespace Lox
             public readonly Expr comparisonExpression;
             public readonly Expr trueExpression;
             public readonly Expr falseExpression;
+            public bool isNullAccessor = false;
 
             public TernaryExpr(Expr comparisonExpression, Expr trueExpression, Expr falseExpression)
             {
