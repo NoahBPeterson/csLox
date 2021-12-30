@@ -381,23 +381,7 @@ namespace Lox
                     function.arity() + " arguments but got " +
                     arguments.Count + ".");
             }
-            object callFunction = function.call(this, arguments);
-            if(call.callee is Expr.Get)
-            {
-                Expr.Get cascade = ((Expr.Get)call.callee);
-                if(cascade.isCascading)
-                {
-                    return evaluate(cascade._object);
-                }
-            }else if(call.callee is Expr.Set)
-            {
-                Expr.Set cascade = ((Expr.Set)call.callee);
-                if (cascade.isCascading)
-                {
-                    return evaluate(cascade._object);
-                }
-            }
-            return callFunction;
+            return function.call(this, arguments);
         }
 
         public object visitFunction(Statement.function func)

@@ -17,7 +17,7 @@ namespace Lox
         private List<Token> tokens;
         private int current = 0;
         private bool parsingLoop = false;
-
+        private bool inBlock = false;
         public Parser(List<Token> tokens)
         {
             this.tokens = tokens;
@@ -262,13 +262,22 @@ namespace Lox
         private Statement expressionStatement()
         {
             Expr expr = expression();
-            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix)
+            if (expr is Expr.AssignExpr || expr is Expr.Call || expr is Expr.Set || expr is Expr.postfix || expr is Expr.prefix || expr is Expr.Variable || expr is Expr.Literal || expr is Expr.Super || expr is Expr.This) //Take out Literal
             {
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
             }
-            match(TokenType.SEMICOLON);
-            return new Statement.Print(expr);
+            if((expr is Expr.TernaryExpr && ((Expr.TernaryExpr)expr).isNullAccessor)) //Optional semicolon, but doesn't print after evaluation.
+            {
+                match(TokenType.SEMICOLON);
+                return new Statement.Expression(expr);
+            }
+            if (!inBlock)
+            {
+                match(TokenType.SEMICOLON);
+                return new Statement.Print(expr);
+            }
+            throw error(previous(), "Cannot use REPL inside a body."+expr.GetType());
         }
 
         private Statement.function function(String kind)
@@ -305,10 +314,13 @@ namespace Lox
         {
             List<Statement> statements = new List<Statement>();
 
+            bool previousBlock = inBlock;
+            inBlock = true;
             while (!check(TokenType.RIGHT_BRACE) && !isAtEnd())
             {
                 statements.Add(declaration());
             }
+            inBlock = previousBlock;
 
             consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
             return statements;
@@ -536,14 +548,16 @@ namespace Lox
                 }else if (match(TokenType.QUESTION_DOT))
                 {
                     Token nil = new Token(TokenType.NIL, "nil", null, -1, -1);
+                    Expr callIfNotNull = new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false);
+                    if(match(TokenType.LEFT_PAREN))
+                    {
+                        callIfNotNull = finishCall(callIfNotNull);
+                    }
                     expr = new Expr.TernaryExpr(
-                        new Expr.BinaryExpr(expr, new Token(TokenType.EXCLAMATION_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
-                        new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false), // :
-                        new Expr.Literal(null, nil));
-                }else if (match(TokenType.DOT_DOT))
-                {
-                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after '..'.");
-                    expr = new Expr.Get(expr, name, true);
+                        new Expr.BinaryExpr(expr, new Token(TokenType.EQUALS_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
+                        new Expr.Literal(null, nil), // :
+                        callIfNotNull); // new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false));
+                    ((Expr.TernaryExpr)expr).isNullAccessor = true;
                 }
                 else
                 {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Threading;
 
 namespace Lox
 {
@@ -16,12 +17,34 @@ namespace Lox
 
         static void Main(string[] args)
         {
-            if(args.Length > 1)
+            if(args.Length > 2)
             {
                 Console.WriteLine("Usage: Lox [script]");
                 System.Environment.Exit(64);
             }else if(args.Length == 1)
             {
+                runFile(args[0]);
+            }else if(args.Length == 2)
+            {
+                Thread timeoutThread = new Thread(Timeout.sleep);
+                string[] timeout = args[1].Split('=');
+                int timeToLive = -1;
+                if (timeout.Length == 2) 
+                {
+                    if (timeout[0].ToLower().Equals("timeout"))
+                    {
+                        try
+                        {
+                            timeToLive = Int32.Parse(timeout[1]);
+                        }catch (FormatException)
+                        {
+                            Console.WriteLine($"Unable to parse '{timeout[1]}");
+                        }
+                    }
+                }
+                if(timeToLive != -1)
+                    timeoutThread.Start(timeToLive);
+
                 runFile(args[0]);
             }else
             {
@@ -44,7 +67,7 @@ namespace Lox
                 {
                     System.Environment.Exit(70);
                 }
-
+                System.Environment.Exit(0);
             }
         }
 
@@ -140,6 +163,25 @@ namespace Lox
             }
             Console.WriteLine(err);
             hadRuntimeError = true;
+        }
+    }
+
+    class Timeout
+    {
+        public static void sleep(object n)
+        {
+            int i = -1;
+            if (n is int)
+            {
+                i = (int)n;
+            }else
+            {
+                return;
+            }
+
+            Thread.Sleep(i * 1000);
+            Console.WriteLine("Error: Program timed out after " + i + " seconds.");
+            System.Environment.Exit(64);
         }
     }
 }

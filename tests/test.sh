@@ -1,11 +1,11 @@
 #!/bin/bash
 for file in ./*/*.lox
 do
-	../bin/Release/Lox.exe "$file" > "$file".test
+	../bin/x64/Release/net5.0/Lox.exe "$file" > "$file".test
 done
 for file in ./*.lox
 do
-	../bin/Release/Lox.exe "$file" > "$file".test
+	../bin/x64/Release/net5.0/Lox.exe "$file" > "$file".test
 done
 echo "" > ./testDifference.txt
 for file in ./*/*.txt
