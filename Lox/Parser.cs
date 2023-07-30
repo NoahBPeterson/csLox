@@ -267,6 +267,11 @@ namespace Lox
                 consume(TokenType.SEMICOLON, "Expect ';' after expression.");
                 return new Statement.Expression(expr);
             }
+            if((expr is Expr.TernaryExpr && ((Expr.TernaryExpr)expr).isNullAccessor)) //Optional semicolon, but doesn't print after evaluation.
+            {
+                match(TokenType.SEMICOLON);
+                return new Statement.Expression(expr);
+            }
             if (!inBlock)
             {
                 match(TokenType.SEMICOLON);
@@ -536,10 +541,16 @@ namespace Lox
                 else if (match(TokenType.QUESTION_DOT))
                 {
                     Token nil = new Token(TokenType.NIL, "nil", null, -1, -1);
+                    Expr callIfNotNull = new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false);
+                    if(match(TokenType.LEFT_PAREN))
+                    {
+                        callIfNotNull = finishCall(callIfNotNull);
+                    }
                     expr = new Expr.TernaryExpr(
-                        new Expr.BinaryExpr(expr, new Token(TokenType.EXCLAMATION_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
-                        new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false), // :
-                        new Expr.Literal(null, nil));
+                        new Expr.BinaryExpr(expr, new Token(TokenType.EQUALS_EQUALS, "==", null, -1, -1), new Expr.Literal(null, nil)), // ?
+                        new Expr.Literal(null, nil), // :
+                        callIfNotNull); // new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false));
+                    ((Expr.TernaryExpr)expr).isNullAccessor = true;
                 }
                 else
                 {

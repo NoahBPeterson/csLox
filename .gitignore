@@ -13,3 +13,4 @@
 *.test
 /tests/testDifference.txt
 /Properties
+/cslox

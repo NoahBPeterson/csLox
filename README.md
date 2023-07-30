@@ -1,6 +1,8 @@
 # csLox
 An implementation of Lox interpreted using C#, [following this tutorial.](http://www.craftinginterpreters.com)
 
+A live demo is available at my personal site here: https://noahpeterson.me/loxInterpreter
+
 #### Control Structures
  - if-then-else
  - while, do-while, for
@@ -147,8 +149,7 @@ Todo: ☐ ☑ ☒
 ☑ Inheritance
  - ☑ Multiple Inheritance
 
-☐ Deploy to a website
- - ☐ Create a Website frontend
- - ☐ Create example programs to show off
- - ☐ Create a Docker container for everything
- - ☐ Deploy to a personal site
+☑ Deploy to a website
+ - ☑ Create a Website frontend
+ - ☑ Create example programs to show off
+ - ☑ Deploy to a personal site
