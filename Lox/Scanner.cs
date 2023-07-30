@@ -142,7 +142,6 @@ namespace Lox
                         {
                             addToken(TokenType.APOSTROPHE_S);
                             advance();
-                            // current++;
                         }
                     }
                     break;
