@@ -67,7 +67,7 @@ namespace Lox
                 {
                     System.Environment.Exit(70);
                 }
-
+                System.Environment.Exit(0);
             }
         }
 
@@ -180,7 +180,7 @@ namespace Lox
             }
 
             Thread.Sleep(i * 1000);
-            Console.Error.WriteLineAsync("Error: Program timed out after " + i + " seconds.");
+            Console.WriteLine("Error: Program timed out after " + i + " seconds.");
             System.Environment.Exit(64);
         }
     }
