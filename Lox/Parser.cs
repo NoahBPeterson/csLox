@@ -532,7 +532,13 @@ namespace Lox
                 {
                     Token name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
                     expr = new Expr.Get(expr, name, false);
-                }else if (match(TokenType.QUESTION_DOT))
+                }
+                else if (match(TokenType.APOSTROPHE_S))
+                {
+                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after \"\'s\".");
+                    expr = new Expr.Get(expr, name, false);
+                }
+                else if (match(TokenType.QUESTION_DOT))
                 {
                     Token nil = new Token(TokenType.NIL, "nil", null, -1, -1);
                     Expr callIfNotNull = new Expr.Get(expr, consume(TokenType.IDENTIFIER, "Expect property after '?."), false);

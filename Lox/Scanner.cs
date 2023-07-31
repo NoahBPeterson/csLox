@@ -125,7 +125,7 @@ namespace Lox
                 case 'o': //'or' but not 'orchid'
                     if (peek() == 'r')
                     {
-                        if(peekNext() == ' ' || peekNext() == '\t' || peekNext() == '\r' || peekNext() == '\n')
+                        if (isWhitespace(peekNext()))
                         {
                             addToken(TokenType.OR);
                             advance();
@@ -135,6 +135,16 @@ namespace Lox
                             identifier();
                         }
                     } break;
+                case '\'':
+                    if (peek() == 's')
+                    {
+                        if (isWhitespace(peekNext()))
+                        {
+                            addToken(TokenType.APOSTROPHE_S);
+                            advance();
+                        }
+                    }
+                    break;
 
 
                 default:
@@ -150,6 +160,15 @@ namespace Lox
                     }
                     break;
             }
+        }
+
+        private bool isWhitespace(char c)
+        {
+            if (c == ' ' || c == '\t' || c == '\r' || c == '\n')
+            {
+                return true;
+            }
+            return false;
         }
 
         private void identifier()

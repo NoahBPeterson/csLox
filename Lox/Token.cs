@@ -48,6 +48,9 @@ namespace Lox
             QUESTION_QUESTION, QUESTION_DOT,
             DOT_DOT,
 
+            // 3 char token
+            APOSTROPHE_S,
+
             //Literals, arbitrary char length
             IDENTIFIER, STRING, NUMBER,
 
