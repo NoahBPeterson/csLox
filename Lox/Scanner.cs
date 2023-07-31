@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System;
 using static Lox.Token;
 
 namespace Lox
@@ -136,14 +134,24 @@ namespace Lox
                         }
                     } break;
                 case '\'':
-                    if (peek() == 's')
+                    if (peek() == 's' || peek() == 'S')
                     {
                         if (isWhitespace(peekNext()))
                         {
-                            addToken(TokenType.APOSTROPHE_S);
                             advance();
+                            addToken(TokenType.APOSTROPHE);
+                            break;
                         }
                     }
+                    else if (peekPrevious(2) == 's' || peekPrevious(2) == 'S')
+                    {
+                        if (isWhitespace(peek()))
+                        {
+                            addToken(TokenType.APOSTROPHE);
+                            break;
+                        }
+                    }
+                    Lox.error(line, lineCharCounter, "Expected 's' before or after \' and whitespace after \' " + c);
                     break;
 
 
@@ -241,6 +249,15 @@ namespace Lox
             //Trim quotes, add token
             string value = source.Substring(start + 1, (current-start) - 2);
             addToken(TokenType.STRING, value);
+        }
+
+        private char peekPrevious(int charactersBack = 1)
+        {
+            if (current == 0)
+            {
+                return '\0';
+            }
+            return source.ToCharArray()[current - charactersBack];
         }
 
         private char peek()

@@ -49,7 +49,7 @@ namespace Lox
             DOT_DOT,
 
             // 3 char token
-            APOSTROPHE_S,
+            APOSTROPHE,
 
             //Literals, arbitrary char length
             IDENTIFIER, STRING, NUMBER,

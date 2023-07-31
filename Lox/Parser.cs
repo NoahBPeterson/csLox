@@ -533,9 +533,9 @@ namespace Lox
                     Token name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
                     expr = new Expr.Get(expr, name, false);
                 }
-                else if (match(TokenType.APOSTROPHE_S))
+                else if (match(TokenType.APOSTROPHE))
                 {
-                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after \"\'s\".");
+                    Token name = consume(TokenType.IDENTIFIER, $"Expect property name after \"{tokens[current-1].lexeme}\".");
                     expr = new Expr.Get(expr, name, false);
                 }
                 else if (match(TokenType.QUESTION_DOT))
